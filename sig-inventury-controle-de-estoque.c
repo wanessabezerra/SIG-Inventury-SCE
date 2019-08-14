@@ -13,7 +13,7 @@ void menuSobre();
 
 int opcao1;
 int opcao2;
-//int opcao3;
+int opcao3;
 
 struct produto {
 		char nomeProduto[quantCadastro] [50];
