@@ -34,6 +34,8 @@ int main (void){
 	system("cls");
 	setlocale(LC_ALL, "portuguese");
 
+
+
 int opcao1;
 	do{
 		menuPrincipal();
