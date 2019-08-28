@@ -54,6 +54,9 @@ int quemSomos();
 int contato();
 int inforPrograma();
 
+int validacaoEhNumero(char);
+int validacaoEhLetra(char);
+
 struct cliente {
 		char nomeCliente[quantCadastro] [50];
 		char marca[quantCadastro] [50];
@@ -487,3 +490,28 @@ int inforPrograma(){
 	printf("Em Construção");
 	return 0;
 }
+
+///////////////////////////////////////////////
+//// F U N Ç Õ E S  D E  V A L I D A Ç A O ////
+///////////////////////////////////////////////
+
+int validacaoEhNumero(char c) {
+  if (c>='0'&& c<='9') {
+    return 1;
+  }
+  else 
+    return 0;
+  
+}
+
+
+int validacaoEhLetra(char c) {
+  if (c>='A' && c<='Z') {
+    return 1;
+  }
+  else if (c>='a' && c<='z') {
+    return 1;
+  }
+  else {
+    return 0;
+  }
