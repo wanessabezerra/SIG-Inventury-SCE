@@ -130,27 +130,8 @@ int main (void){
 	}
 }
 
-void telaMenuPrincipal(){
-	printf("\t= = = = = = = = = = = = = = = = = =\n"
-			"\t=   M E N U   P R I N C I P A L   =\n"
-			"\t= = = = = = = = = = = = = = = = = =\n"
-			"\n\t1 - Cliente\n"
-			"\t2 - Produto\n"
-			"\t3 - Controle de Estoque\n"
-			"\t4 - Relatório\n"
-			"\t5 - Sobre\n"
-			"\t0 - Encerrar\n");
-}
-
 void telaMenuCliente(){
-	printf ("\t= = = = = = = = = = = = = = = = = = = = = =\n"
-			"\t=   C A D A S T R O  D O  C L I E N T E   =\n"
-			"\t= = = = = = = = = = = = = = = = = = = = = =\n"
-			  "\n\t1 - Cadastrar Cliente\n"
-			  "\t2 - Atualizar Cliente\n"
-			  "\t3 - Pesquisar Cliente\n"
-			  "\t4 - Deletar Cliente\n"
-			  "\t0 - Retornar\n");
+	
 }
 
 void telaMenuProduto(){
@@ -201,7 +182,15 @@ void telaMenuSobre(){
 int menuPrincipal(void){
 	int opcao;
 	system("clear");
-	telaMenuPrincipal();
+	printf("\t= = = = = = = = = = = = = = = = = =\n"
+			"\t=   M E N U   P R I N C I P A L   =\n"
+			"\t= = = = = = = = = = = = = = = = = =\n"
+			"\n\t1 - Cliente\n"
+			"\t2 - Produto\n"
+			"\t3 - Controle de Estoque\n"
+			"\t4 - Relatório\n"
+			"\t5 - Sobre\n"
+			"\t0 - Encerrar\n");
 	printf("\n\tEscolha uma opção: ");
 	scanf("%d", &opcao); 
 	return opcao;
@@ -212,48 +201,51 @@ int menuPrincipal(void){
 int menuCliente(){
 	int opcao;
 	system("clear");
-	telaMenuCliente();
+	printf ("\t= = = = = = = = = = = = = = = = = = = = = =\n"
+			"\t=   C A D A S T R O  D O  C L I E N T E   =\n"
+			"\t= = = = = = = = = = = = = = = = = = = = = =\n"
+			  "\n\t1 - Cadastrar Cliente\n"
+			  "\t2 - Atualizar Cliente\n"
+			  "\t3 - Pesquisar Cliente\n"
+			  "\t4 - Deletar Cliente\n"
+			  "\t0 - Retornar\n");
 	printf("\n\tEscolha uma opção: ");
 	scanf("%d", &opcao);
-	opcao = menuCliente();
+
 
 	while(opcao != 0){
-    switch(opcao){
-      case 1: {
+    	switch(opcao){
+      		case 1: {
 				system("clear");
 				cadastrarCliente();
-        system ("pause");
 				break;}
 
-      case 2: {
+      		case 2: {
 				system("clear");
 				pesquisarCliente();
-        system ("pause");
 				break;}
       
-      case 3: {
+      		case 3: {
 				system("clear");
 				atualizarCliente();
 				break;}
       
-      case 4: {
+      		case 4: {
 				system("clear");
 				deletarCliente();
 				break;}
-
-      case 0: {
-				system("clear");
-				return 0;
-				break;}
+			case 0: {
+				system ("clear");
+				break;
+			}
 
 			default: {
 				system("clear");
-				printf("Opção inválida, digite um número válido\n\n");
 				break;}
       
-			opcao = menuCliente();
-      return opcao;
+      	return opcao;
 		}
+	opcao = menuCliente();
   }
 }
 
@@ -368,6 +360,10 @@ int deletarCliente(){
 	return 0;
 }
 
+int retornarCliente(){
+	printf("retornando");
+	return 0;
+}
 
 ///////////////////////////////////////////
 //// F U N Ç Õ E S  D O  P R O D U T O ////
@@ -515,3 +511,4 @@ int validacaoEhLetra(char c) {
   else {
     return 0;
   }
+}
