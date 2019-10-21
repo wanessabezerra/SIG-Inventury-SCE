@@ -210,7 +210,7 @@ void excluiCliente(void) {
             achou = 1;
         }
     }
-    fclose(fp);
+    
     if (achou) {
         exibeCliente(cliente);
         getchar();
@@ -228,6 +228,7 @@ void excluiCliente(void) {
         printf("O cliente %s não foi encontrado...\n", procurado);
     }
     free(cliente);
+    fclose(fp);
 }
 
 
