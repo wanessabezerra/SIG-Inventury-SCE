@@ -121,7 +121,57 @@ void buscaProduto(void) {
 
 
 void editaProduto(void) {
-  printf("Menu edita \n");
+  FILE* fp;
+  Prod* produto;
+  int achou;
+  char resp;
+  char procurado[15];
+  fp = fopen("produto.dat", "r+b");
+  if (fp == NULL) {
+    printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+    printf("Não é possível continuar o programa...\n");
+    exit(1);
+  }
+  printf("\n\n");
+  printf("= = = S G P e t = = = \n");
+  printf("= = Editar produto = = \n");
+  printf("= = = = = = = = = = = \n");
+  printf("Informe o nome do produto a ser alterado: ");
+  scanf(" %14[^\n]", procurado);
+  produto = (Prod*) malloc(sizeof(Prod));
+  achou = 0;
+  while((!achou) && (fread(produto, sizeof(Prod), 1, fp))) {
+   if ((strcmp(produto->nome, procurado) == 0) && (produto->status == '1')) {
+     achou = 1;
+   }
+  }
+  if (achou) {
+    exibeProduto(produto);
+    getchar();
+    printf("Deseja realmente editar este produto (s/n)? ");
+    scanf("%c", &resp);
+    if (resp == 's' || resp == 'S') {
+      printf("\nInforme o código do produto: ");
+      scanf("%d", &produto->cod);
+      printf("Informe o nome do produto: ");
+      scanf(" %14[^\n]", produto->nome);
+      printf("Informe a tipo do produto: ");
+      scanf(" %14[^\n]", produto->tipo);
+      printf("Informe a data de cadastro do produto (dd/mm/aaaa): ");
+      scanf(" %10[^\n]", produto->data);
+      getchar();
+      produto->status = '1';
+      fseek(fp, (-1)*sizeof(Prod), SEEK_CUR);
+      fwrite(produto, sizeof(Prod), 1, fp);
+      printf("\nProduto editado com sucesso!!!\n");
+    } else {
+      printf("\nOk, os dados não foram alterados\n");
+    }
+  } else {
+    printf("O produto %s não foi encontrado...\n", procurado);
+  }
+  free(produto);
+  fclose(fp);
 }
 
 
@@ -150,7 +200,6 @@ void excluiProduto(void) {
      achou = 1;
    }
   }
-  fclose(fp);
   if (achou) {
     exibeProduto(produto);
     getchar();
@@ -168,6 +217,7 @@ void excluiProduto(void) {
     printf("O produto %s não foi encontrado...\n", procurado);
   }
   free(produto);
+  fclose(fp);
 }
 
 
