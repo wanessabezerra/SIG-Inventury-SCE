@@ -20,7 +20,7 @@ int menuPrincipalCliente(void);
 int menuCliente(void);
 void cadastraCliente(void);
 void buscaCliente(void);
-//void editaCliente(void);
+void editaCliente(void);
 void excluiCliente(void);
 void exibeCliente(Cliente*);
 void gravaCliente(Cliente*);
@@ -89,7 +89,7 @@ int menuPrincipalCliente(void){
                     break;
             case 2 :  buscaCliente();
                     break;
-            //case 3 :  editaCliente();
+            case 3 :  editaCliente();
                     break;
             case 4 :  excluiCliente();
                     break;
@@ -103,6 +103,8 @@ int menuPrincipalCliente(void){
     }
     return 0;
 }
+
+
 
 int menuCliente(void) {
     int opcao;
@@ -131,11 +133,6 @@ void cadastraCliente(void) {
     cliente = (Cliente*) malloc(sizeof(Cliente));
     printf("Nome: ");
     scanf(" %19[^\n]", cliente->nomeCliente);
-
-    //while(ehLetra()!= cliente ){
-       // printf("Nome: ");
-        //scanf(" %19[^\n]", cliente->nomeCliente);}
-
     printf("Data de nascimento (dd/mm/aaaa): ");
     scanf(" %10[^\n]", cliente->nascCliente);
     getchar();
@@ -185,6 +182,62 @@ void buscaCliente(void){
     free(cliente);
 }
 
+void editaCliente(void) {
+    FILE* fp;
+    Cliente* cliente;
+    int achou;
+    char resp;
+    char procurado[15];
+    fp = fopen("cliente.dat", "r+b");
+    if (fp == NULL) {
+    printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+    printf("Não é possível continuar o programa...\n");
+    exit(1);
+    }
+    printf("\n\n");
+    printf("= = = = = = = = = = = \n");
+    printf("= = Editar cliente = = \n");
+    printf("= = = = = = = = = = = \n");
+    printf("Informe o nome do cliente a ser alterado: ");
+    scanf(" %14[^\n]", procurado);
+    cliente = (Cliente*) malloc(sizeof(Cliente));
+    achou = 0;
+    while((!achou) && (fread(cliente, sizeof(Cliente), 1, fp))) {
+        if ((strcmp(cliente->nomeCliente, procurado) == 0) && (cliente->statusCliente == '1')) {
+            achou = 1;
+        }
+    }
+    if (achou) {
+        exibeCliente(cliente);
+        getchar();
+        printf("Deseja realmente editar este cliente (s/n)? ");
+        scanf("%c", &resp);
+        if (resp == 's' || resp == 'S') {
+            printf("Nome: ");
+            scanf(" %19[^\n]", cliente->nomeCliente);
+            printf("Data de nascimento (dd/mm/aaaa): ");
+            scanf(" %10[^\n]", cliente->nascCliente);
+            getchar();
+            printf("CPF: ");
+            scanf(" %11[^\n]", &cliente->cpfCliente);
+            printf("E-mail: ");
+            scanf(" %19[^\n]", cliente->emailCliente);
+            printf("Telefone: ");
+            scanf(" %11[^\n]", cliente->telefoneCliente);
+            cliente->statusCliente = '1';
+            fseek(fp, (-1)*sizeof(Cliente), SEEK_CUR);
+            fwrite(cliente, sizeof(Cliente), 1, fp);
+            printf("\ncliente editado com sucesso!!!\n");
+        } else {
+            printf("\nOk, os dados não foram alterados\n");
+        }
+    } else {
+        printf("O cliente %s não foi encontrado...\n", procurado);
+  }
+  free(cliente);
+  fclose(fp);
+}
+
 void excluiCliente(void) {
     FILE* fp;
     Cliente* cliente;
@@ -210,7 +263,6 @@ void excluiCliente(void) {
             achou = 1;
         }
     }
-    
     if (achou) {
         exibeCliente(cliente);
         getchar();
