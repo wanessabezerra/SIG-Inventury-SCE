@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <locale.h>
 #include <string.h>
+//#include "funcoesDeValidacao"
 
 
 typedef struct client Cliente;
@@ -9,9 +10,9 @@ typedef struct client Cliente;
 struct client {
   char nomeCliente[20];
   char nascCliente[11];
-  int cpfCliente[12];
+  int cpfCliente;
   char emailCliente[20];
-  int telefoneCliente[12];
+  char telefoneCliente[12];
   char statusCliente;
 };
 
@@ -25,7 +26,8 @@ void excluiCliente(void);
 void exibeCliente(Cliente*);
 void gravaCliente(Cliente*);
 
-//void listaCliente(void);
+int menuPrincipalRelatorio(void);
+void listaClientes(void);
 
 int ehLetra(char);
 
@@ -40,6 +42,8 @@ int main(void) {
                     break;
             //case 2 :  menuPrincipalProduto();
                     break;
+            case 5 :  menuPrincipalRelatorio();
+                    break;
             case 0 : return 0;
                     break;
             default : printf("Opção inválida, digite um número válido\n\n");
@@ -49,8 +53,7 @@ int main(void) {
                     break;
             //case 4 :  excluiP(;
                     break;
-            //case 5 :  lista();
-                    break;
+          
             //case 6 :  sobre();
                     break;
     }
@@ -73,7 +76,7 @@ int menuPrincipal(void) {
             "[5] - Relatórios\n"
             "[6] - Sobre o programa\n"
             "[0] - Encerrar programa\n");
-    printf("Escolha sua opção: ");
+    printf("\nEscolha sua opção: ");
     scanf("%d", &opcao);
     system("cls || clear");
     return opcao;
@@ -117,7 +120,7 @@ int menuCliente(void) {
             "[3] - Atualizar Cliente\n"
             "[4] - Deletar Cliente\n"
             "[0] - Retornar\n");
-    printf("Escolha sua opção: ");
+    printf("\nEscolha sua opção: ");
     scanf("%d", &opcao);
     system("cls || clear");
     return opcao;
@@ -127,9 +130,9 @@ int menuCliente(void) {
 void cadastraCliente(void) {
     Cliente* cliente;
     printf("\n\n");
-    printf("= = = = = = = = = = = \n");
-    printf("= Cadastrar Cliente  = \n");
-    printf("= = = = = = = = = = = \n");
+    printf("= = = = = = = = = = = = =\n");
+    printf("= = Cadastrar Cliente = =\n");
+    printf("= = = = = = = = = = = = =\n");
     cliente = (Cliente*) malloc(sizeof(Cliente));
     printf("Nome: ");
     scanf(" %19[^\n]", cliente->nomeCliente);
@@ -137,7 +140,7 @@ void cadastraCliente(void) {
     scanf(" %10[^\n]", cliente->nascCliente);
     getchar();
     printf("CPF: ");
-    scanf(" %11[^\n]", &cliente->cpfCliente);
+    scanf(" %d", &cliente->cpfCliente);
     printf("E-mail: ");
     scanf(" %19[^\n]", cliente->emailCliente);
     printf("Telefone: ");
@@ -195,9 +198,9 @@ void editaCliente(void) {
     exit(1);
     }
     printf("\n\n");
-    printf("= = = = = = = = = = = \n");
-    printf("= = Editar cliente = = \n");
-    printf("= = = = = = = = = = = \n");
+    printf("= = = = = = = = = = = =\n");
+    printf("= = Editar Cliente = =\n");
+    printf("= = = = = = = = = = = =\n");
     printf("Informe o nome do cliente a ser alterado: ");
     scanf(" %14[^\n]", procurado);
     cliente = (Cliente*) malloc(sizeof(Cliente));
@@ -219,7 +222,7 @@ void editaCliente(void) {
             scanf(" %10[^\n]", cliente->nascCliente);
             getchar();
             printf("CPF: ");
-            scanf(" %11[^\n]", &cliente->cpfCliente);
+            scanf(" %d", &cliente->cpfCliente);
             printf("E-mail: ");
             scanf(" %19[^\n]", cliente->emailCliente);
             printf("Telefone: ");
@@ -251,9 +254,9 @@ void excluiCliente(void) {
         exit(1);
     }
     printf("\n\n");
-    printf("= = = = = = = = = = = \n");
-    printf("= = Excluir cliente = = \n");
-    printf("= = = = = = = = = = = \n");
+    printf("= = = = = = = = = = = =\n");
+    printf("= = Excluir Cliente = = \n");
+    printf("= = = = = = = = = = = =\n");
     printf("Informe o nome do cliente a ser apagado: ");
     scanf(" %14[^\n]", procurado);
     cliente = (Cliente*) malloc(sizeof(Cliente));
@@ -301,19 +304,73 @@ void exibeCliente(Cliente* cliente) {
     printf("Nascimento: %s\n", cliente->nascCliente);
     printf("CPF: %d\n", cliente->cpfCliente);
     printf("E-mail: %s\n", cliente->emailCliente);
-    printf("Telefone: %d\n", cliente->telefoneCliente);
-    printf("liente: %c\n", cliente->statusCliente);
+    printf("Telefone: %s\n", cliente->telefoneCliente);
+    printf("Status: %c\n", cliente->statusCliente);
     printf("\n");
 }
 
-int ehLetra(char c) {
-  if (c>='A' && c<='Z') {
-    return 1;
-  }
-  else if (c>='a' && c<='z') {
-    return 1;
-  }
-  else {
+/////////////// menu relatório /////////////////////
+int menuPrincipalRelatorio(void){
+    int opcao;
+    opcao = menuCliente();
+    while (opcao != 0) {
+        switch (opcao) {
+            case 1 :  listaClientes();
+                    break;
+            //case 2 :  buscaCliente();
+                    break;
+            //case 3 :  editaCliente();
+                    break;
+            //case 4 :  excluiCliente();
+                    break;
+            //case 0 : return 0;
+                    break;
+            default : printf("Opção inválida, digite um número válido\n\n");
+                    break;
+
+        }
+    opcao = menuCliente();
+    }
     return 0;
+}
+
+int menuRelatorio(void) {
+    int opcao;
+    printf("\n\n");
+    printf ("\t= = = = = = = = = = = = =\n"
+            "\t=  R E L A T Ó R I O S  =\n"
+            "\t= = = = = = = = = = = = = = = = = =\n"
+            "\n[1] - Listagem dos Cliente\n"
+            "[2] - Produto\n"
+            "[3] - Controle de Compras\n"
+            "[4] - Controle de Vendas\n"
+            "[5] - Relatórios\n"
+            "[0] - Encerrar programa\n");
+    printf("Escolha sua opção: ");
+    scanf("%d", &opcao);
+    system("cls || clear");
+    return opcao;
+}
+
+void listaClientes(void) {
+  FILE* fp;
+  Cliente* cliente;
+  fp = fopen("cliente.dat", "rb");
+  if (fp == NULL) {
+    printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+    printf("Não é possível continuar o programa...\n");
+    exit(1);
   }
+  printf("\n\n");
+  printf("= = = = = = = = = = = = = = =\n");
+  printf("= = Listagem de Clientes = = \n");
+  printf("= = = = = = = = = = = = = = =\n");
+  cliente = (Cliente*) malloc(sizeof(Cliente));
+  while(fread(cliente, sizeof(Cliente), 1, fp)) {
+    if (cliente->statusCliente == '1') {
+      exibeCliente(cliente);
+    }
+  }
+  fclose(fp);
+  free(cliente);
 }
