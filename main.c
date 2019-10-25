@@ -358,8 +358,8 @@ int menuProduto(void) {
   printf("= = = = = = = = = = = = = = = = = = = \n");
   printf("1 - Cadastrar produto\n");
   printf("2 - Pesquisar produto\n");
-  printf("3 - Alterar produto\n");
-  printf("4 - Excluir produto\n");
+  printf("3 - Atualizar produto\n");
+  printf("4 - Deletar produto\n");
   printf("5 - Listar todos os produtos\n");
   printf("0 - Retornar\n");
   printf("Escolha sua opção: ");
