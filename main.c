@@ -42,12 +42,13 @@ void cadastraProduto(void);
 void buscaProduto(void);
 void editaProduto(void);
 void excluiProduto(void);
-void listaProduto(void);
 void exibeProduto(Prod*);
 void gravaProduto(Prod*);
 
 int menuPrincipalRelatorio(void);
+int menuRelatorio(void);
 void listaClientes(void);
+void listaProduto(void);
 
 int ehLetra(char);
 
@@ -527,31 +528,6 @@ void excluiProduto(void) {
   fclose(fp);
 }
 
-
-void listaProduto(void) {
-  FILE* fp;
-  Prod* produto;
-  fp = fopen("produto.dat", "rb");
-  if (fp == NULL) {
-    printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
-    printf("Não é possível continuar o programa...\n");
-    exit(1);
-  }
-  printf("\n\n");
-  printf("= = = = = = = = = = = \n");
-  printf("= = Exibe Produto = = \n");
-  printf("= = = = = = = = = = = \n");
-  produto = (Prod*) malloc(sizeof(Prod));
-  while(fread(produto, sizeof(Prod), 1, fp)) {
-    if (produto->status == '1') {
-      exibeProduto(produto);
-    }
-  }
-  fclose(fp);
-  free(produto);
-}
-
-
 void gravaProduto(Prod* produto) {
   FILE* fp;
   fp = fopen("produto.dat", "ab");
@@ -576,12 +552,12 @@ void exibeProduto(Prod* produto) {
 /////////////// menu relatório /////////////////////
 int menuPrincipalRelatorio(void){
     int opcao;
-    opcao = menuCliente();
+    opcao = menuRelatorio();
     while (opcao != 0) {
         switch (opcao) {
             case 1 :  listaClientes();
                     break;
-            //case 2 :  buscaCliente();
+            case 2 :  listaProduto();
                     break;
             //case 3 :  editaCliente();
                     break;
@@ -593,7 +569,7 @@ int menuPrincipalRelatorio(void){
                     break;
 
         }
-    opcao = menuCliente();
+    opcao = menuRelatorio();
     }
     return 0;
 }
@@ -604,8 +580,8 @@ int menuRelatorio(void) {
     printf ("\t= = = = = = = = = = = = =\n"
             "\t=  R E L A T Ó R I O S  =\n"
             "\t= = = = = = = = = = = = = = = = = =\n"
-            "\n[1] - Listagem dos Cliente\n"
-            "[2] - Produto\n"
+            "\n[1] - Lista de Clientes\n"
+            "[2] - Lista de Produtos\n"
             "[3] - Controle de Compras\n"
             "[4] - Controle de Vendas\n"
             "[5] - Relatórios\n"
@@ -637,4 +613,27 @@ void listaClientes(void) {
   }
   fclose(fp);
   free(cliente);
+}
+
+void listaProduto(void) {
+  FILE* fp;
+  Prod* produto;
+  fp = fopen("produto.dat", "rb");
+  if (fp == NULL) {
+    printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+    printf("Não é possível continuar o programa...\n");
+    exit(1);
+  }
+  printf("\n\n");
+  printf("= = = = = = = = = = = \n");
+  printf("= = Exibe Produto = = \n");
+  printf("= = = = = = = = = = = \n");
+  produto = (Prod*) malloc(sizeof(Prod));
+  while(fread(produto, sizeof(Prod), 1, fp)) {
+    if (produto->status == '1') {
+      exibeProduto(produto);
+    }
+  }
+  fclose(fp);
+  free(produto);
 }
