@@ -1,4 +1,4 @@
-#include <stdio.h>
+ #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -7,8 +7,8 @@ typedef struct produto Prod;
 struct produto {
   int cod;
   char nome[15];
-  char tipo[15];
-  char data[11];
+  char marca[15];
+  int quant;
   char status;
 };
 
@@ -54,10 +54,10 @@ int menuProduto(void) {
   printf("3 - Alterar produto\n");
   printf("4 - Excluir produto\n");
   printf("5 - Listar todos os produtos\n");
-  //printf("6 - Sobre o produto\n");
   printf("0 - Encerrar\n");
   printf("Escolha sua opção: ");
   scanf("%d", &op);
+  system("cls || clear");
   return op;
 }
 
@@ -73,10 +73,10 @@ void cadastraProduto(void) {
   scanf("%d", &produto->cod);
   printf("Informe o nome do produto: ");
   scanf(" %14[^\n]", produto->nome);
-  printf("Informe a tipo do produto: ");
-  scanf(" %14[^\n]", produto->tipo);
-  printf("Informe a data de cadastro do produto (dd/mm/aaaa): ");
-  scanf(" %10[^\n]", produto->data);
+  printf("Informe a marca do produto: ");
+  scanf(" %14[^\n]", produto->marca);
+  printf("Informe a quantidade do produto: ");
+  scanf("%d", &produto->quant);
   getchar();
   produto->status = '1';
   printf("###############################\n");
@@ -156,9 +156,9 @@ void editaProduto(void) {
       printf("Informe o nome do produto: ");
       scanf(" %14[^\n]", produto->nome);
       printf("Informe a tipo do produto: ");
-      scanf(" %14[^\n]", produto->tipo);
-      printf("Informe a data de cadastro do produto (dd/mm/aaaa): ");
-      scanf(" %10[^\n]", produto->data);
+      scanf(" %14[^\n]", produto->marca);
+      printf("Informe a quantidade disponivel do produto (dd/mm/aaaa): ");
+      scanf("%d", &produto->quant);
       getchar();
       produto->status = '1';
       fseek(fp, (-1)*sizeof(Prod), SEEK_CUR);
@@ -261,8 +261,7 @@ void gravaProduto(Prod* produto) {
 void exibeProduto(Prod* produto) {
   printf("Código: %d\n", produto->cod);
   printf("Nome: %s\n", produto->nome);
-  printf("Tipo: %s\n", produto->tipo);
-  printf("Data de cadastro: %s\n", produto->data);
-  printf("Status: %c\n", produto->status);
+  printf("Marca: %s\n", produto->marca);
+  printf("Quantidade: %d\n", produto->quant);
   printf("\n");
 }
