@@ -1,6 +1,10 @@
- #include <stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+int validacaoEhNumero(char);
+int validacaoEhLetra(char);
+int validacaoPalavra(char[]);
 
 typedef struct produto Prod;
 
@@ -71,12 +75,32 @@ void cadastraProduto(void) {
   produto = (Prod*) malloc(sizeof(Prod));
   printf("\nInforme o código do produto: ");
   scanf("%d", &produto->cod);
+  while((validacaoEhNumero(produto->cod)!=1)) {
+    printf("inválido");
+    printf("\nInforme o código da empresa: ");
+    scanf("%d", &produto->cod);
+  }
   printf("Informe o nome do produto: ");
   scanf(" %14[^\n]", produto->nome);
+  while((validacaoPalavra(produto->nome)!= 1)) {
+    printf("inválido");
+    printf("\nInforme o nome do produto: ");
+    scanf(" %14[^\n]", produto->nome);
+  }
   printf("Informe a marca do produto: ");
   scanf(" %14[^\n]", produto->marca);
+  while((validacaoPalavra(produto->marca)!= 1)) {
+    printf("inválido");
+    printf("\nInforme a marca do produto: ");
+    scanf(" %14[^\n]", produto->marca);
+  }
   printf("Informe a quantidade do produto: ");
   scanf("%d", &produto->quant);
+  while((validacaoEhNumero(produto->quant)!=1)) {
+    printf("inválido");
+    printf("\nInforme a quantidade do produto: ");
+    scanf("%d", &produto->quant);
+  }
   getchar();
   produto->status = '1';
   printf("###############################\n");
@@ -153,12 +177,32 @@ void editaProduto(void) {
     if (resp == 's' || resp == 'S') {
       printf("\nInforme o código do produto: ");
       scanf("%d", &produto->cod);
+      while((validacaoEhNumero(produto->cod)!=1)) {
+        printf("inválido");
+        printf("\nInforme o código da empresa: ");
+        scanf("%d", &produto->cod);
+      }
       printf("Informe o nome do produto: ");
       scanf(" %14[^\n]", produto->nome);
+      while((validacaoPalavra(produto->nome)!= 1)) {
+        printf("inválido");
+        printf("\nInforme o nome do produto: ");
+        scanf(" %14[^\n]", produto->nome);
+      }
       printf("Informe a tipo do produto: ");
       scanf(" %14[^\n]", produto->marca);
-      printf("Informe a quantidade disponivel do produto (dd/mm/aaaa): ");
+      while((validacaoPalavra(produto->nome)!= 1)) {
+        printf("inválido");
+        printf("\nInforme a marca do produto: ");
+        scanf(" %14[^\n]", produto->marca);
+      }
+      printf("Informe a quantidade disponivel do produto: ");
       scanf("%d", &produto->quant);
+      while((validacaoEhNumero(produto->quant)!=1)) {
+        printf("inválido");
+        printf("\nInforme a quantidade disponivel do produto: ");
+        scanf("%d", &produto->quant);
+      }
       getchar();
       produto->status = '1';
       fseek(fp, (-1)*sizeof(Prod), SEEK_CUR);
@@ -264,4 +308,36 @@ void exibeProduto(Prod* produto) {
   printf("Marca: %s\n", produto->marca);
   printf("Quantidade: %d\n", produto->quant);
   printf("\n");
+}
+
+int validacaoEhNumero(char c) {
+  if (c>='0'&& c<='9') {
+    return 0;
+  }
+  else {
+    return 1;
+  }
+}
+
+int validacaoPalavra(char s[]) {
+  int tam;
+  tam = strlen(s) - 1;
+  for (int i = 0; i < tam; i++) {
+    if (!validacaoEhLetra(s[i])) {
+      return 0;
+    }
+  }
+  return 1;
+}
+
+int validacaoEhLetra(char c) {
+  if (c>='A' && c<='Z') {
+    return 1;
+  }
+  else if (c>='a' && c<='z') {
+    return 1;
+  }
+  else {
+    return 0;
+  }
 }
