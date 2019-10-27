@@ -11,8 +11,8 @@ typedef struct compra Compra;
 
 struct compra {
   int cod;
-  char nome[81];
-  char marca[25];
+  char nome[15];
+  char marca[15];
   char status;
   int qntd;
   
@@ -85,14 +85,19 @@ void cadastraCompra(void) {
     scanf("%d", &compra->cod);
   }
   printf("Informe o nome do produto: ");
-  scanf(" %80[^\n]", compra->nome);
+  scanf(" %14[^\n]", compra->nome);
   while((validacaoPalavra(compra->nome)!= 1)) {
     printf("inválido");
     printf("\nInforme o nome do produto: ");
-    scanf(" %80[^\n]", compra->nome);
+    scanf(" %14[^\n]", compra->nome);
   }
   printf("Informe a marca do produto: ");
-  scanf(" %24[^\n]", compra->marca);
+  scanf(" %14[^\n]", compra->marca);
+  while((validacaoPalavra(compra->marca)!= 1)) {
+    printf("inválido");
+    printf("\nInforme a marca do produto: ");
+    scanf(" %14[^\n]", compra->marca);
+  }
   printf("Informe a quantidade do produto: ");
   scanf("%d", &compra->qntd);
   while((validacaoEhNumero(compra->qntd)!=1)) {
@@ -127,11 +132,6 @@ void buscaCompra(void) {
   printf("= = = = = = = = = = = = \n");
   printf("Informe o nome do produto a ser buscado: ");
   scanf(" %14[^\n]", procurado);
-  while((validacaoPalavra(compra->nome)!= 1)) {
-    printf("inválido");
-    printf("\nInforme o nome do produto: ");
-    scanf(" %80[^\n]", compra->nome);
-  }
   compra = (Compra*) malloc(sizeof(Compra));
   achou = 0;
   while((!achou) && (fread(compra, sizeof(Compra), 1, fp))) {
@@ -166,11 +166,6 @@ void editaCompra(void) {
   printf("= = = = = = = = = = = \n");
   printf("Informe o nome do produto a ser alterado: ");
   scanf(" %14[^\n]", procurado);
-  while((validacaoPalavra(compra->nome)!= 1)) {
-    printf("inválido");
-    printf("\nInforme o nome do produto: ");
-    scanf(" %80[^\n]", compra->nome);
-  }
   compra = (Compra*) malloc(sizeof(Compra));
   achou = 0;
   while((!achou) && (fread(compra, sizeof(Compra), 1, fp))) {
@@ -193,8 +188,18 @@ void editaCompra(void) {
       }
       printf("Informe o nome do produto: ");
       scanf(" %14[^\n]", compra->nome);
+      while((validacaoPalavra(compra->nome)!= 1)) {
+        printf("inválido");
+        printf("\nInforme o nome do produto: ");
+        scanf(" %14[^\n]", compra->nome);
+      }
       printf("Informe a marca do produto: ");
       scanf(" %14[^\n]", compra->marca);
+      while((validacaoPalavra(compra->marca)!= 1)) {
+        printf("inválido");
+        printf("\nInforme a marca do produto: ");
+        scanf(" %14[^\n]", compra->marca);
+      }
       printf("Informe a quantidade disponivel do produto: ");
       scanf("%d", &compra->qntd);
       while((validacaoEhNumero(compra->qntd)!=1)) {
@@ -236,11 +241,6 @@ void excluiCompra(void) {
   printf("= = = = = = = = =  = = \n");
   printf("Informe o nome do produto a ser apagado: ");
   scanf(" %14[^\n]", procurado);
-  while((validacaoPalavra(compra->nome)!= 1)) {
-    printf("inválido");
-    printf("\nInforme o nome do produto: ");
-    scanf(" %80[^\n]", compra->nome);
-  }
   compra = (Compra*) malloc(sizeof(Compra));
   achou = 0;
   while((!achou) && (fread(compra, sizeof(Compra), 1, fp))) {
