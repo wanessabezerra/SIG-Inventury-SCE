@@ -5,21 +5,21 @@
 //#include "funcoesDeValidacao"
 
 
-typedef struct client Cliente;
+typedef struct clt Cliente;
 
-struct client {
-  char nomeCliente[20];
-  char nascCliente[11];
-  int cpfCliente;
-  char emailCliente[20];
-  char telefoneCliente[12];
-  char statusCliente;
+struct clt {
+  char nome[20];
+  char nasc[11];
+  char cpf[12];
+  char email[20];
+  char telefone[12];
+  char status;
 };
 
-typedef struct produto Prod;
+typedef struct produt Prod;
 
-struct produto {
-  int cod;
+struct produt {
+  char cod[6];
   char nome[15];
   char marca[15];
   int quant;
@@ -48,9 +48,14 @@ void gravaProduto(Prod*);
 int menuPrincipalRelatorio(void);
 int menuRelatorio(void);
 void listaClientes(void);
-void listaProduto(void);
+void listaProdutos(void);
+void listaVendas(void);
 
 int ehLetra(char);
+
+int validacaoCpf(char *);
+int validacaoEmail( const char *);
+int validacaoTelefone(char *);
 
 
 int main(void) {
@@ -70,13 +75,6 @@ int main(void) {
             default : printf("Opção inválida, digite um número válido\n\n");
                     break;
             
-            //case 3 :  edita();
-                    break;
-            //case 4 :  excluiP(;
-                    break;
-          
-            //case 6 :  sobre();
-                    break;
     }
     opcao = menuPrincipal();
   }
@@ -87,9 +85,9 @@ int main(void) {
 int menuPrincipal(void) {
     int opcao;
     printf("\n\n");
-    printf ("\t= = = = = = = = = = = = = = = = = =\n"
-            "\t=   M E N U   P R I N C I P A L   =\n"
-            "\t= = = = = = = = = = = = = = = = = =\n"
+    printf ("= = = = = = = = = = = = = = = = = =\n"
+            "=   M E N U   P R I N C I P A L   =\n"
+            "= = = = = = = = = = = = = = = = = =\n"
             "\n[1] - Cliente\n"
             "[2] - Produto\n"
             "[3] - Controle de Compras\n"
@@ -155,22 +153,40 @@ void cadastraCliente(void) {
     printf("= = Cadastrar Cliente = =\n");
     printf("= = = = = = = = = = = = =\n");
     cliente = (Cliente*) malloc(sizeof(Cliente));
-    printf("Nome: ");
-    scanf(" %19[^\n]", cliente->nomeCliente);
+    printf("\nNome: ");
+    scanf(" %19[^\n]", cliente->nome);
     printf("Data de nascimento (dd/mm/aaaa): ");
-    scanf(" %10[^\n]", cliente->nascCliente);
+    scanf(" %10[^\n]", cliente->nasc);
     getchar();
+
     printf("CPF: ");
-    scanf(" %d", &cliente->cpfCliente);
+    scanf("%11s", cliente->cpf);
+    while((validacaoCpf(cliente->cpf)!=1)) {
+      printf("\nNúmero inválido, tente novamente.\n");
+      printf("CPF: ");
+      scanf("%11s", cliente->cpf);
+    }
+
     printf("E-mail: ");
-    scanf(" %19[^\n]", cliente->emailCliente);
-    printf("Telefone: ");
-    scanf(" %11[^\n]", cliente->telefoneCliente);
-    cliente->statusCliente = '1';
-    printf("###############################\n");
-    exibeCliente(cliente);
-    printf("###############################\n");
+    scanf(" %19[^\n]", cliente->email);
+    while(!(validacaoEmail(cliente->email))) {
+      printf("\nE-mail inválido, tente novamente.\n");
+      printf("E-mail: ");
+      scanf(" %19[^\n]", cliente->email);
+    }
+    
+    printf("\nTelefone: ");
+    scanf("%9s", cliente->telefone);
+    getchar();
+    while((validacaoTelefone(cliente->telefone)!=1)) {
+      printf("\nTelefone inválido, tente novamente.\n");
+      printf("\nTelefone: ");
+      scanf("%9s", cliente->telefone);
+    }
+
+    cliente->status = '1';
     gravaCliente(cliente);
+    system("cls || clear");
 }
 
 void buscaCliente(void){
@@ -193,7 +209,7 @@ void buscaCliente(void){
     cliente = (Cliente*) malloc(sizeof(Cliente));
     achou = 0;
     while((!achou) && (fread(cliente, sizeof(Cliente), 1, fp))) {
-        if ((strcmp(cliente->nomeCliente, procurado) == 0) && (cliente->statusCliente == '1')) {
+        if ((strcmp(cliente->nome, procurado) == 0) && (cliente->status == '1')) {
             achou = 1;
         }
     }
@@ -227,7 +243,7 @@ void editaCliente(void) {
     cliente = (Cliente*) malloc(sizeof(Cliente));
     achou = 0;
     while((!achou) && (fread(cliente, sizeof(Cliente), 1, fp))) {
-        if ((strcmp(cliente->nomeCliente, procurado) == 0) && (cliente->statusCliente == '1')) {
+        if ((strcmp(cliente->nome, procurado) == 0) && (cliente->status == '1')) {
             achou = 1;
         }
     }
@@ -238,17 +254,22 @@ void editaCliente(void) {
         scanf("%c", &resp);
         if (resp == 's' || resp == 'S') {
             printf("Nome: ");
-            scanf(" %19[^\n]", cliente->nomeCliente);
+            scanf(" %19[^\n]", cliente->nome);
             printf("Data de nascimento (dd/mm/aaaa): ");
-            scanf(" %10[^\n]", cliente->nascCliente);
+            scanf(" %10[^\n]", cliente->nasc);
             getchar();
             printf("CPF: ");
-            scanf(" %d", &cliente->cpfCliente);
+            scanf("%15s", cliente->cpf);
+            while((validacaoCpf(cliente->cpf)!=1)) {
+              printf("\nCPF: ");
+              scanf("%15s", cliente->cpf);
+            }
             printf("E-mail: ");
-            scanf(" %19[^\n]", cliente->emailCliente);
+            scanf(" %19[^\n]", cliente->email);
             printf("Telefone: ");
-            scanf(" %11[^\n]", cliente->telefoneCliente);
-            cliente->statusCliente = '1';
+            scanf(" %11[^\n]", cliente->telefone
+        );
+            cliente->status = '1';
             fseek(fp, (-1)*sizeof(Cliente), SEEK_CUR);
             fwrite(cliente, sizeof(Cliente), 1, fp);
             printf("\ncliente editado com sucesso!!!\n");
@@ -283,7 +304,7 @@ void excluiCliente(void) {
     cliente = (Cliente*) malloc(sizeof(Cliente));
     achou = 0;
     while((!achou) && (fread(cliente, sizeof(Cliente), 1, fp))) {
-        if ((strcmp(cliente->nomeCliente, procurado) == 0) && (cliente->statusCliente == '1')) {
+        if ((strcmp(cliente->nome, procurado) == 0) && (cliente->status == '1')) {
             achou = 1;
         }
     }
@@ -293,7 +314,7 @@ void excluiCliente(void) {
         printf("Deseja realmente apagar este cliente (s/n)? ");
         scanf("%c", &resp);
         if (resp == 's' || resp == 'S') {
-            cliente->statusCliente = '0';
+            cliente->status = '0';
             fseek(fp, -1*sizeof(Cliente), SEEK_CUR);
             fwrite(cliente, sizeof(Cliente), 1, fp);
             printf("\nCliente excluído com sucesso!!!\n");
@@ -321,12 +342,13 @@ void gravaCliente(Cliente* cliente) {
 }
 
 void exibeCliente(Cliente* cliente) {
-    printf("Nome: %s\n", cliente->nomeCliente);
-    printf("Nascimento: %s\n", cliente->nascCliente);
-    printf("CPF: %d\n", cliente->cpfCliente);
-    printf("E-mail: %s\n", cliente->emailCliente);
-    printf("Telefone: %s\n", cliente->telefoneCliente);
-    printf("Status: %c\n", cliente->statusCliente);
+    printf("Nome: %s\n", cliente->nome);
+    printf("Nascimento: %s\n", cliente->nasc);
+    printf("CPF: %s\n", cliente->cpf);
+    printf("E-mail: %s\n", cliente->email);
+    printf("Telefone: %s\n", cliente->telefone
+);
+    printf("Status: %c\n", cliente->status);
     printf("\n");
 }
 /////////////// menu produto ///////////////
@@ -343,9 +365,11 @@ int menuPrincipalProduto(void) {
                 break;
       case 4 :  excluiProduto();
                 break;
-      case 5 :  listaProduto();
+      case 0 : return 0;
                 break;
-    }
+      default : printf("Opção inválida, digite um número válido\n\n");
+                break;
+}
     opcao = menuProduto();
   }
   return 0;
@@ -378,7 +402,7 @@ void cadastraProduto(void) {
   printf("= = = = = = = = = = = \n");
   produto = (Prod*) malloc(sizeof(Prod));
   printf("\nInforme o código do produto: ");
-  scanf("%d", &produto->cod);
+  scanf("%5s ", produto->cod);
   printf("Informe o nome do produto: ");
   scanf(" %14[^\n]", produto->nome);
   printf("Informe a marca do produto: ");
@@ -387,9 +411,6 @@ void cadastraProduto(void) {
   scanf("%d", &produto->quant);
   getchar();
   produto->status = '1';
-  printf("###############################\n");
-  exibeProduto(produto);
-  printf("###############################\n");
   gravaProduto(produto);
 }
 
@@ -441,7 +462,7 @@ void editaProduto(void) {
     exit(1);
   }
   printf("\n\n");
-  printf("= = = S G P e t = = = \n");
+  printf("= = = = = = = = = = = \n");
   printf("= = Editar produto = = \n");
   printf("= = = = = = = = = = = \n");
   printf("Informe o nome do produto a ser alterado: ");
@@ -460,7 +481,7 @@ void editaProduto(void) {
     scanf("%c", &resp);
     if (resp == 's' || resp == 'S') {
       printf("\nInforme o código do produto: ");
-      scanf("%d", &produto->cod);
+      scanf("%5s", produto->cod);
       printf("Informe o nome do produto: ");
       scanf(" %14[^\n]", produto->nome);
       printf("Informe a tipo do produto: ");
@@ -542,12 +563,13 @@ void gravaProduto(Prod* produto) {
 
 
 void exibeProduto(Prod* produto) {
-  printf("Código: %d\n", produto->cod);
+  printf("Código: %s\n", produto->cod);
   printf("Nome: %s\n", produto->nome);
   printf("Marca: %s\n", produto->marca);
   printf("Quantidade: %d\n", produto->quant);
   printf("\n");
 }
+
 
 /////////////// menu relatório /////////////////////
 int menuPrincipalRelatorio(void){
@@ -557,13 +579,13 @@ int menuPrincipalRelatorio(void){
         switch (opcao) {
             case 1 :  listaClientes();
                     break;
-            case 2 :  listaProduto();
+            case 2 :  listaProdutos();
                     break;
-            //case 3 :  editaCliente();
+            //case 3 :  listaCompras();
                     break;
-            //case 4 :  excluiCliente();
+            //case 4 :  listaVendas();
                     break;
-            //case 0 : return 0;
+            case 0 : return 0;
                     break;
             default : printf("Opção inválida, digite um número válido\n\n");
                     break;
@@ -577,15 +599,15 @@ int menuPrincipalRelatorio(void){
 int menuRelatorio(void) {
     int opcao;
     printf("\n\n");
-    printf ("\t= = = = = = = = = = = = =\n"
-            "\t=  R E L A T Ó R I O S  =\n"
-            "\t= = = = = = = = = = = = = = = = = =\n"
+    printf ("= = = = = = = = = = = = =\n"
+            "=  R E L A T Ó R I O S  =\n"
+            "= = = = = = = = = = = = =\n"
             "\n[1] - Lista de Clientes\n"
             "[2] - Lista de Produtos\n"
-            "[3] - Controle de Compras\n"
-            "[4] - Controle de Vendas\n"
+            "[3] - Listar todos as Compras\n"
+            "[4] - Listar todos as Vendas\n"
             "[5] - Relatórios\n"
-            "[0] - Encerrar programa\n");
+            "[0] - Retornar\n");
     printf("Escolha sua opção: ");
     scanf("%d", &opcao);
     system("cls || clear");
@@ -607,7 +629,7 @@ void listaClientes(void) {
   printf("= = = = = = = = = = = = = = =\n");
   cliente = (Cliente*) malloc(sizeof(Cliente));
   while(fread(cliente, sizeof(Cliente), 1, fp)) {
-    if (cliente->statusCliente == '1') {
+    if (cliente->status == '1') {
       exibeCliente(cliente);
     }
   }
@@ -615,7 +637,7 @@ void listaClientes(void) {
   free(cliente);
 }
 
-void listaProduto(void) {
+void listaProdutos(void) {
   FILE* fp;
   Prod* produto;
   fp = fopen("produto.dat", "rb");
@@ -626,7 +648,7 @@ void listaProduto(void) {
   }
   printf("\n\n");
   printf("= = = = = = = = = = = \n");
-  printf("= = Exibe Produto = = \n");
+  printf("= = Listagem de Produtos = = \n");
   printf("= = = = = = = = = = = \n");
   produto = (Prod*) malloc(sizeof(Prod));
   while(fread(produto, sizeof(Prod), 1, fp)) {
@@ -636,4 +658,128 @@ void listaProduto(void) {
   }
   fclose(fp);
   free(produto);
+}
+/*
+void listaCompras(void) {
+  FILE* fp;
+  Compra* compra;
+  fp = fopen("compra.dat", "rb");
+  if (fp == NULL) {
+    printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+    printf("Não é possível continuar o programa...\n");
+    exit(1);
+  }
+  printf("\n\n");
+  printf("= = = = = = = = = = = \n");
+  printf("= = Listagem de Compras = = \n");
+  printf("= = = = = = = = = = = \n");
+  compra = (Compra*) malloc(sizeof(Compra));
+  while(fread(compra, sizeof(Compra), 1, fp)) {
+    if (compra->status == '1') {
+      exibeCompra(compra);
+    }
+  }
+  fclose(fp);
+  free(compra);
+}
+
+
+void listaVendas(void) {
+  FILE* fp;
+  Venda* venda;
+  fp = fopen("venda.dat", "rb");
+  if (fp == NULL) {
+    printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+    printf("Não é possível continuar o programa...\n");
+    exit(1);
+  }
+  printf("\n\n");
+  printf("= = = = = = = = = = = \n");
+  printf("= = Listagem de Vendas = = \n");
+  printf("= = = = = = = = = = = \n");
+  venda = (Prod*) malloc(sizeof(Prod));
+  while(fread(venda, sizeof(Prod), 1, fp)) {
+    if (venda->status == '1') {
+      exibeVenda(venda);
+    }
+  }
+  fclose(fp);
+  free(venda);
+}
+*/ 
+int validacaoEhNumero(char c) {
+  if (c>='0'&& c<='9') {
+    return 1;
+  }
+  else {
+    return 0;
+  }
+}
+
+int validacaoCpf(char *cpf){
+    int i, j, digito1 = 0, digito2 = 0;
+    if(strlen(cpf) != 11)
+        return 0;
+    else if((strcmp(cpf,"00000000000") == 0) || (strcmp(cpf,"11111111111") == 0) || (strcmp(cpf,"22222222222") == 0) ||
+            (strcmp(cpf,"33333333333") == 0) || (strcmp(cpf,"44444444444") == 0) || (strcmp(cpf,"55555555555") == 0) ||
+            (strcmp(cpf,"66666666666") == 0) || (strcmp(cpf,"77777777777") == 0) || (strcmp(cpf,"88888888888") == 0) ||
+            (strcmp(cpf,"99999999999") == 0))
+        return 0;
+    else
+    {
+        
+        for(i = 0, j = 10; i < strlen(cpf)-2; i++, j--)
+            digito1 += (cpf[i]-48) * j;
+        digito1 %= 11;
+        if(digito1 < 2)
+            digito1 = 0;
+        else
+            digito1 = 11 - digito1;
+        if((cpf[9]-48) != digito1)
+            return 0;
+        else
+        
+        {
+            for(i = 0, j = 11; i < strlen(cpf)-1; i++, j--)
+                    digito2 += (cpf[i]-48) * j;
+        digito2 %= 11;
+        if(digito2 < 2)
+            digito2 = 0;
+        else
+            digito2 = 11 - digito2;
+        if((cpf[10]-48) != digito2)
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int validacaoEmail( const char * email ) {
+    char usuario[256], site[256], dominio[256];
+
+    if( sscanf( email, "%[^@ \t\n]@%[^. \t\n].%3[^ \t\n]", usuario, site, dominio ) != 3 )
+        return 0;
+
+    return 1;
+}
+
+int validacaoTelefone(char *telefone){
+  if(strlen(telefone) != 9) {
+      return 0;
+      }
+  else if((strcmp(telefone,"000000000") == 0) || (strcmp(telefone,"111111111") == 0) || (strcmp(telefone,"222222222") == 0) ||
+          (strcmp(telefone,"333333333") == 0) || (strcmp(telefone,"444444444") == 0) || (strcmp(telefone,"555555555") == 0) ||
+          (strcmp(telefone,"666666666") == 0) || (strcmp(telefone,"777777777") == 0) || (strcmp(telefone,"888888888") == 0) ||
+          (strcmp(telefone,"999999999") == 0)){
+      return 0;}
+
+  else if(strlen(telefone) == 6){
+    int tam = strlen(telefone);
+    for(int i = 0; i < tam; i++){
+      char c = telefone[i];
+      if (c < '0' || c > '9'){
+        return 0;}
+      }
+    }
+  return 1;
 }
