@@ -51,6 +51,10 @@ void listaClientes(void);
 void listaProdutos(void);
 void listaVendas(void);
 
+int menuPrincipalSobre(void);
+int menuSobre(void);
+void sobreOprograma(void);
+
 int ehLetra(char);
 
 int validacaoCpf(char *);
@@ -69,6 +73,8 @@ int main(void) {
             case 2 :  menuPrincipalProduto();
                     break;
             case 5 :  menuPrincipalRelatorio();
+                    break;
+            case 6 :  menuPrincipalSobre();
                     break;
             case 0 : return 0;
                     break;
@@ -682,8 +688,6 @@ void listaCompras(void) {
   fclose(fp);
   free(compra);
 }
-
-
 void listaVendas(void) {
   FILE* fp;
   Venda* venda;
@@ -707,6 +711,61 @@ void listaVendas(void) {
   free(venda);
 }
 */ 
+/////////////// Sobre /////////////////
+
+int menuPrincipalSobre(void) {
+  int opcao;
+  opcao = menuSobre();
+  while (opcao != 0) {
+    switch (opcao) {
+      case 1 :  sobreOprograma();
+                break;
+      case 0 : return 0;
+                break;
+      default : printf("Opção inválida, digite um número válido\n\n");
+                break;
+    }
+    opcao = menuSobre();
+  }
+  return 0;
+}
+
+int menuSobre(void) {
+  int op;
+  printf("\n\n");
+  printf("= = = = = = = = = = = = = = = = = = = \n");
+  printf("= = = = = = = = Sobre = = = = = = = = \n");
+  printf("= = = = = = = = = = = = = = = = = = = \n");
+  printf("1 - Sobre\n");
+  printf("0 - Retornar\n");
+  printf("Escolha sua opção: ");
+  scanf("%d", &op);
+  system("cls || clear");
+  return op;
+}
+
+void sobreOprograma(void){
+  printf("\n\n");
+  printf("    *================================== SOBRE ==================================*\n");
+  printf("    |                                                                           |\n");
+  printf("    |PROGRAMA DE CONTROLE DE ESTOQUES CRIADO UTILIZANDO ALOCACAO DINAMICA,      |\n");
+  printf("    |STRUCTS E PONTEIROS, COMO FORMA DE AVALIACAO DA DISCIPLINA DE PROGRAMAÇÃO, |\n");
+  printf("    |DO PROFESSOR: FLAVIUS GORGONIO. APRESENTADO EM SALA DE AULA,               |\n");
+  printf("    |COM A FINALIDADE DE OBTER NOTAS DE AVALIAÇÃO DA DISCIPLINA.                |\n");
+  printf("    |                                                                           |\n");
+  printf("    |                                                                           |\n");
+  printf("    |                              IDENTIFICACAO                                |\n");
+  printf("    |                                                                           |\n");
+  printf("    |               UFRN CERES CAICÓ - SISTEMAS DE INFORMAÇÃO                   |\n");
+  printf("    |RENATA ARAÚJO.                             WANESSA SILVA.                  |\n");
+  printf("    |TEL:(84) 9 9912-3995                       TEL:(84) 9 9849-0496            |\n");
+  printf("    |renatakarla02@gmail.com                    wanessaparelhas68@gmail.com     |\n");
+  printf("    |                                                                           |\n");
+  printf("    *===========================================================================*\n");
+}
+
+/////////////// validaçoes ////////////////
+
 int validacaoEhNumero(char c) {
   if (c>='0'&& c<='9') {
     return 1;
