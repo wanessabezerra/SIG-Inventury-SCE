@@ -4,12 +4,13 @@
 #include <string.h>
 #include <time.h>
 
+
 typedef struct clt Cliente;
 
 struct clt {
   char nome[20];
-  char nasc[11];
-  char cpf[12];
+  int nasc[3];
+  char cpf[12]; 
   char email[20];
   char telefone[12];
   char status;
@@ -106,11 +107,13 @@ int validacaoPalavra(char[]);
 int validacaoCpf(char *);
 int validacaoEmail( const char *);
 int validacaoTelefone(char *);
-int validacaoData(int, int, int);
-int bissexto(int);
+
 int validacaoCod(char *);
 int validacaoPalavra1(char[]);
 int validacaoEhLetra(char);
+
+int bissexto(int);
+int dataValida(int,int,int);
 
 
 int main(void) {
@@ -224,15 +227,14 @@ void cadastraCliente(void) {
     }
 
     printf("Data de nascimento no formato(dd/mm/aaaa): ");
-    scanf(" %10[^\n]", cliente->nasc);
+    scanf(" %d/%d/%d", &cliente->nasc[0], &cliente->nasc[1],&cliente->nasc[2]);
     getchar();
-    /*
-    while((validacaoData(dia, mes, ano))!= 0){
-      printf("Data inválida: %d/%d/%d, tente novamente. ", dia, mes, ano);
-      printf("\nData: ");
-      scanf(" %10[^\n]", cliente->nasc);
-      getchar();
-    }*/
+    while((dataValida(cliente->nasc[0], cliente->nasc[1],cliente->nasc[2]))!= 1){
+              printf("Data inválida: %d/%d/%d, tente novamente. ", cliente->nasc[0], cliente->nasc[1],cliente->nasc[2]);
+              printf("\nData: ");
+              scanf("%d/%d/%d", &cliente->nasc[0], &cliente->nasc[1],&cliente->nasc[2]);
+              getchar();
+            }
 
     printf("CPF: ");
     scanf("%11s", cliente->cpf);
@@ -339,15 +341,15 @@ void editaCliente(void) {
             }
 
             printf("Data de nascimento no formato(dd/mm/aaaa): ");
-            scanf(" %10[^\n]", cliente->nasc);
+            scanf("%d/%d/%d", &cliente->nasc[0], &cliente->nasc[1],&cliente->nasc[2]);
             getchar();
-            /*
-            while((validacaoData(dia, mes, ano))!= 0){
-              printf("Data inválida: %d/%d/%d, tente novamente. ", dia, mes, ano);
+            
+            while((dataValida(cliente->nasc[0], cliente->nasc[1],cliente->nasc[2]))!= 0){
+              printf("Data inválida: %d/%d/%d, tente novamente. ", cliente->nasc[0], cliente->nasc[1],cliente->nasc[2]);
               printf("\nData: ");
-              scanf(" %10[^\n]", cliente->nasc);
+              scanf("%d/%d/%d", &cliente->nasc[0], &cliente->nasc[1],&cliente->nasc[2]);
               getchar();
-            }*/
+            }
 
             printf("CPF: ");
             scanf("%11s", cliente->cpf);
@@ -451,7 +453,7 @@ void gravaCliente(Cliente* cliente) {
 
 void exibeCliente(Cliente* cliente) {
     printf("Nome: %s\n", cliente->nome);
-    printf("Nascimento: %s\n", cliente->nasc);
+    printf("Nascimento: %d/%d/%d\n",cliente->nasc[0], cliente->nasc[1],cliente->nasc[2]);
     printf("CPF: %s\n", cliente->cpf);
     printf("E-mail: %s\n", cliente->email);
     printf("Telefone: %s\n", cliente->telefone
@@ -1642,11 +1644,6 @@ int validacaoTelefone(char *telefone){
     }
   return 1;
 }
-
-
-int bissexto(int);
-int dataValida(int,int,int);
-
 
     
 int bissexto(int aa){
