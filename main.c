@@ -29,7 +29,8 @@ struct produt {
 typedef struct compr Compra;
 
 struct compr {
-  char cod[8];
+  char cod[6];
+  char cod2[5];
   char nome[15];
   char marca[15];
   char qntd[4];
@@ -107,8 +108,8 @@ int validacaoPalavra(char[]);
 int validacaoCpf(char *);
 int validacaoEmail( const char *);
 int validacaoTelefone(char *);
-
 int validacaoCod(char *);
+int validacaoCod2(char *);
 int validacaoPalavra1(char[]);
 int validacaoEhLetra(char);
 
@@ -495,7 +496,6 @@ int menuProduto(void) {
   printf("2 - Pesquisar produto\n");
   printf("3 - Atualizar produto\n");
   printf("4 - Deletar produto\n");
-  printf("5 - Listar todos os produtos\n");
   printf("0 - Retornar\n");
   printf("Escolha sua opção: ");
   scanf("%d", &op);
@@ -568,12 +568,12 @@ void buscaProduto(void) {
   printf("= = = = = = = = = = = = \n");
   printf("= =  Buscar Produto = = \n");
   printf("= = = = = = = = = = = = \n");
-  printf("Informe o nome do produto a ser buscado: ");
+  printf("Informe o código do produto a ser buscado: ");
   scanf(" %14[^\n]", procurado);
   produto = (Prod*) malloc(sizeof(Prod));
   achou = 0;
   while((!achou) && (fread(produto, sizeof(Prod), 1, fp))) {
-   if ((strcmp(produto->nome, procurado) == 0) && (produto->status == '1')) {
+   if ((strcmp(produto->cod, procurado) == 0) && (produto->status == '1')) {
      achou = 1;
    }
   }
@@ -606,12 +606,12 @@ void editaProduto(void) {
   printf("= = = = = = = = = = = \n");
   printf("= = Editar produto = = \n");
   printf("= = = = = = = = = = = \n");
-  printf("Informe o nome do produto a ser alterado: ");
+  printf("Informe o código do produto a ser alterado: ");
   scanf(" %14[^\n]", procurado);
   produto = (Prod*) malloc(sizeof(Prod));
   achou = 0;
   while((!achou) && (fread(produto, sizeof(Prod), 1, fp))) {
-   if ((strcmp(produto->nome, procurado) == 0) && (produto->status == '1')) {
+   if ((strcmp(produto->cod, procurado) == 0) && (produto->status == '1')) {
      achou = 1;
    }
   }
@@ -689,12 +689,12 @@ void excluiProduto(void) {
   printf("= = = = = = = =  = = = \n");
   printf("= = Apagar Produto = = \n");
   printf("= = = = = = = = =  = = \n");
-  printf("Informe o nome do produto a ser apagado: ");
+  printf("Informe o código do produto a ser apagado: ");
   scanf(" %14[^\n]", procurado);
   produto = (Prod*) malloc(sizeof(Prod));
   achou = 0;
   while((!achou) && (fread(produto, sizeof(Prod), 1, fp))) {
-   if ((strcmp(produto->nome, procurado) == 0) && (produto->status == '1')) {
+   if ((strcmp(produto->cod, procurado) == 0) && (produto->status == '1')) {
      achou = 1;
    }
   }
@@ -764,7 +764,6 @@ int menuPrincipalCompra(void){
       }
       opcao = menuCompra();
     }
-    printf("\nFim do programa!\n\n");
     return 0;
 }
 
@@ -795,11 +794,19 @@ void cadastraCompra(void) {
   compra = (Compra*) malloc(sizeof(Compra));
 
   printf("\nCódigo da empresa: ");
-  scanf("%7s", compra->cod);
-  while((validacaoCod(compra->cod)!=1)) {
+  scanf("%4s", compra->cod2);
+  while((validacaoCod2(compra->cod2)!=1)) {
     printf("\nCódigo inválido, somente 6 dígitos, tente novamente.\n");
     printf("Código da empresa: ");
-    scanf("%7s", compra->cod);
+    scanf("%4s", compra->cod2);
+  }
+
+  printf("\nCódigo do produto: ");
+  scanf("%5s", compra->cod);
+  while((validacaoCod(compra->cod)!=1)) {
+    printf("inválido");
+    printf("Código do produto: ");
+    scanf("%5s", compra->cod);
   }
 
   printf("Nome do produto: ");
@@ -852,12 +859,12 @@ void buscaCompra(void) {
   printf("= = = = = = = = = = = = \n");
   printf("= =  Buscar Compras = = \n");
   printf("= = = = = = = = = = = = \n");
-  printf("\nInforme o nome do produto a ser buscado: ");
+  printf("\nInforme o código do produto a ser buscado: ");
   scanf(" %14[^\n]", procurado);
   compra = (Compra*) malloc(sizeof(Compra));
   achou = 0;
   while((!achou) && (fread(compra, sizeof(Compra), 1, fp))) {
-   if ((strcmp(compra->nome, procurado) == 0) && (compra->status == '1')) {
+   if ((strcmp(compra->cod, procurado) == 0) && (compra->status == '1')) {
      achou = 1;
    }
   }
@@ -889,12 +896,12 @@ void editaCompra(void) {
   printf("= = = = = = = = = = = \n");
   printf("= = Editar compras = = \n");
   printf("= = = = = = = = = = = \n");
-  printf("Informe o nome do produto a ser alterado: ");
+  printf("Informe o código do produto a ser alterado: ");
   scanf(" %14[^\n]", procurado);
   compra = (Compra*) malloc(sizeof(Compra));
   achou = 0;
   while((!achou) && (fread(compra, sizeof(Compra), 1, fp))) {
-   if ((strcmp(compra->nome, procurado) == 0) && (compra->status == '1')) {
+   if ((strcmp(compra->cod, procurado) == 0) && (compra->status == '1')) {
      achou = 1;
    }
   }
@@ -904,12 +911,12 @@ void editaCompra(void) {
     printf("Deseja realmente editar este produto (s/n)? ");
     scanf("%c", &resp);
     if (resp == 's' || resp == 'S') {
-      printf("\nCódigo da empresa: ");
-      scanf("%7s", compra->cod);
+      printf("\nCódigo do produto: ");
+      scanf("%5s", compra->cod);
       while((validacaoCod(compra->cod)!=1)) {
-        printf("\nCódigo inválido, somente 6 dígitos, tente novamente.\n");
-        printf("Código da empresa: ");
-        scanf("%7s", compra->cod);
+        printf("\nCódigo inválido, tente novamente.\n");
+        printf("Código do produto: ");
+        scanf("%5s", compra->cod);
       }
 
       printf("Nome do produto: ");
@@ -975,12 +982,12 @@ void excluiCompra(void) {
   printf("= = = = = = = =  = = = \n");
   printf("= = Apagar Compra = = \n");
   printf("= = = = = = = = =  = = \n");
-  printf("Informe o nome do produto a ser apagado: ");
+  printf("Informe o código do produto a ser apagado: ");
   scanf(" %14[^\n]", procurado);
   compra = (Compra*) malloc(sizeof(Compra));
   achou = 0;
   while((!achou) && (fread(compra, sizeof(Compra), 1, fp))) {
-   if ((strcmp(compra->nome, procurado) == 0) && (compra->status == '1')) {
+   if ((strcmp(compra->cod, procurado) == 0) && (compra->status == '1')) {
      achou = 1;
    }
   }
@@ -1021,7 +1028,8 @@ void gravaCompra(Compra* compra) {
 
 
 void exibeCompra(Compra* compra) {
-  printf("Código: %s\n", compra->cod);
+  printf("Código da Empresa: %s\n", compra->cod2);
+  printf("Código do Produto: %s\n", compra->cod);
   printf("Nome: %s\n", compra->nome);
   printf("Marca: %s\n", compra->marca);
   printf("Quantidade: %s\n", compra->qntd);
@@ -1053,7 +1061,6 @@ int menuPrincipalVenda(void){
       }
       opcao = menuVenda();
     }
-    printf("\nFim do programa!\n\n");
     return 0;
 }
 
@@ -1343,9 +1350,9 @@ int menuPrincipalRelatorio(void){
                     break;
             case 2 :  listaProdutos();
                     break;
-            //case 3 :  listaCompras();
+            case 3 :  listaCompra();
                     break;
-            //case 4 :  listaVendas();
+            case 4 :  listaVendas();
                     break;
             case 0 : return 0;
                     break;
@@ -1366,8 +1373,8 @@ int menuRelatorio(void) {
             "= = = = = = = = = = = = =\n"
             "\n[1] - Lista de Clientes\n"
             "[2] - Lista de Produtos\n"
-            "[3] - Listar todos as Compras\n"
-            "[4] - Listar todos as Vendas\n"
+            "[3] - Lista todas as Compras\n"
+            "[4] - Lista todos as Vendas\n"
             "[5] - Relatórios\n"
             "[0] - Retornar\n");
     printf("Escolha sua opção: ");
@@ -1428,7 +1435,7 @@ void listaProdutos(void) {
   system("cls || clear");
 }
 
-void listaCompras(void) {
+void listaCompra(void) {
   FILE* fp;
   Compra* compra;
   fp = fopen("compra.dat", "rb");
@@ -1677,17 +1684,43 @@ int dataValida(int dd, int mm, int aa) {
 }
 
 int validacaoCod(char *codi){
-  if(strlen(codi) != 6){
+  if(strlen(codi) != 5){
       return 0;
       }
 
-  else if((strcmp(codi,"000000") == 0) || (strcmp(codi,"111111") == 0) || (strcmp(codi,"222222") == 0) ||
-          (strcmp(codi,"333333") == 0) || (strcmp(codi,"444444") == 0) || (strcmp(codi,"555555") == 0) ||
-          (strcmp(codi,"666666") == 0) || (strcmp(codi,"777777") == 0) || (strcmp(codi,"888888") == 0) ||
-          (strcmp(codi,"999999") == 0)){
+  else if((strcmp(codi,"00000") == 0) || (strcmp(codi,"11111") == 0) || (strcmp(codi,"22222") == 0) ||
+          (strcmp(codi,"33333") == 0) || (strcmp(codi,"44444") == 0) || (strcmp(codi,"55555") == 0) ||
+          (strcmp(codi,"66666") == 0) || (strcmp(codi,"77777") == 0) || (strcmp(codi,"88888") == 0) ||
+          (strcmp(codi,"99999") == 0)){
       return 0;}
 
-  else if(strlen(codi) == 6){
+  else if(strlen(codi) == 5){
+    int tam = strlen(codi);
+    for(int i = 0; i < tam; i++){
+      char c = codi[i];
+      if (c>='A' && c<='Z') {
+        return 0;
+      }
+      else if (c>='a' && c<='z') {
+        return 0;
+      }
+    }
+  }
+  return 1;
+}
+
+int validacaoCod2(char *codi){
+  if(strlen(codi) != 4){
+      return 0;
+      }
+
+  else if((strcmp(codi,"0000") == 0) || (strcmp(codi,"1111") == 0) || (strcmp(codi,"2222") == 0) ||
+          (strcmp(codi,"3333") == 0) || (strcmp(codi,"4444") == 0) || (strcmp(codi,"5555") == 0) ||
+          (strcmp(codi,"6666") == 0) || (strcmp(codi,"7777") == 0) || (strcmp(codi,"8888") == 0) ||
+          (strcmp(codi,"9999") == 0)){
+      return 0;}
+
+  else if(strlen(codi) == 4){
     int tam = strlen(codi);
     for(int i = 0; i < tam; i++){
       char c = codi[i];
