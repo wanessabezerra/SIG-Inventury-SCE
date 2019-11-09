@@ -9,15 +9,17 @@ int validacaoPalavra(char[]);
 int validacaoEhLetra1(char);
 int validacaoPalavra1(char[]);
 int validacaoCod(char *);
+int validacaoCod2(char *);
 
-typedef struct compr Compra;
+typedef struct compra Compra;
 
-struct compr {
-  char cod[8];
+struct compra {
+  char cod[6];
+  char cod2[5];
   char nome[15];
   char marca[15];
   char status;
-  char qntd;
+  int qntd;
   
 };
 
@@ -45,9 +47,7 @@ int main(void) {
                 break;
       case 4 :  excluiCompra();
                 break;
-      case 0 : return 0;
-                break;
-      default : printf("Opção inválida, digite um número válido\n\n");
+      case 5 :  listaCompra();
                 break;
     }
     opcao = menuCompra();
@@ -62,12 +62,13 @@ int menuCompra(void) {
   printf("= = = = = = = = = = = = = = = = = = = \n");
   printf("= = = =  Compras de Produto  = = = = \n");
   printf("= = = = = = = = = = = = = = = = = = = \n");
-  printf("\n1 - Cadastrar Compras\n");
+  printf("1 - Cadastrar Compras\n");
   printf("2 - Pesquisar Compras\n");
   printf("3 - Atualizar Compras\n");
   printf("4 - Deletar Compras\n");
+  printf("5 - Listar todos as Compras\n");
   printf("0 - Retornar\n");
-  printf("\nEscolha sua opção: ");
+  printf("Escolha sua opção: ");
   scanf("%d", &op);
   system("cls || clear");
   return op;
@@ -80,14 +81,20 @@ void cadastraCompra(void) {
   printf(" = = = = = = = = = = = = = = = = =\n");
   printf(" =  Cadastrar Compra de Produtos =\n");
   printf(" = = = = = = = = = = = = = = = = =\n");
-
   compra = (Compra*) malloc(sizeof(Compra));
   printf("\nInforme o código da empresa: ");
-  scanf("%7s", compra->cod);
-  while((validacaoCod(compra->cod)!=1)) {
+  scanf("%4s", compra->cod2);
+  while((validacaoCod2(compra->cod2)!=1)) {
     printf("inválido");
     printf("\nInforme o código da empresa: ");
-    scanf("%7s", compra->cod);
+    scanf("%4s", compra->cod2);
+  }
+  printf("Informe o código do produto: ");
+  scanf("%5s", compra->cod);
+  while((validacaoCod(compra->cod)!=1)) {
+    printf("inválido");
+    printf("\nInforme o código do produto: ");
+    scanf("%5s", compra->cod);
   }
   printf("Informe o nome do produto: ");
   scanf(" %14[^\n]", compra->nome);
@@ -104,20 +111,19 @@ void cadastraCompra(void) {
     scanf(" %14[^\n]", compra->marca);
   }
   printf("Informe a quantidade do produto: ");
-  scanf("%s", &compra->qntd);
-  getchar();
+  scanf("%d", &compra->qntd);
   while((validacaoEhNumero(compra->qntd)!=1)) {
     printf("inválido");
     printf("\nInforme a quantidade do produto: ");
-    scanf("%s", &compra->qntd);
-    getchar();
+    scanf("%d", &compra->qntd);
   }
   (dataEhora(compra));
-  compra->status = '1';
-  gravaCompra(compra);
-  printf("Aperte a tecla ENTER para continuar. ");
   getchar();
-  system("cls || clear");
+  compra->status = '1';
+  printf("###############################\n");
+  exibeCompra(compra);
+  printf("###############################\n");
+  gravaCompra(compra);
 }
 
 
@@ -136,12 +142,12 @@ void buscaCompra(void) {
   printf("= = = = = = = = = = = = \n");
   printf("= =  Buscar Compras = = \n");
   printf("= = = = = = = = = = = = \n");
-  printf("\nInforme o nome do produto a ser buscado: ");
+  printf("Informe o codigo do produto a ser buscado: ");
   scanf(" %14[^\n]", procurado);
   compra = (Compra*) malloc(sizeof(Compra));
   achou = 0;
   while((!achou) && (fread(compra, sizeof(Compra), 1, fp))) {
-   if ((strcmp(compra->nome, procurado) == 0) && (compra->status == '1')) {
+   if ((strcmp(compra->cod, procurado) == 0) && (compra->status == '1')) {
      achou = 1;
    }
   }
@@ -170,12 +176,12 @@ void editaCompra(void) {
   printf("= = = = = = = = = = = \n");
   printf("= = Editar compras = = \n");
   printf("= = = = = = = = = = = \n");
-  printf("Informe o nome do produto a ser alterado: ");
+  printf("Informe o código do produto a ser alterado: ");
   scanf(" %14[^\n]", procurado);
   compra = (Compra*) malloc(sizeof(Compra));
   achou = 0;
   while((!achou) && (fread(compra, sizeof(Compra), 1, fp))) {
-   if ((strcmp(compra->nome, procurado) == 0) && (compra->status == '1')) {
+   if ((strcmp(compra->cod, procurado) == 0) && (compra->status == '1')) {
      achou = 1;
    }
   }
@@ -185,12 +191,12 @@ void editaCompra(void) {
     printf("Deseja realmente editar este produto (s/n)? ");
     scanf("%c", &resp);
     if (resp == 's' || resp == 'S') {
-      printf("\nInforme o código da empresa: ");
-      scanf("%7s", compra->cod);
+      printf("\nInforme o código do produto: ");
+      scanf("%5s", compra->cod);
       while((validacaoCod(compra->cod)!=1)) {
         printf("inválido");
-        printf("\nInforme o código da empresa: ");
-        scanf("%7s", compra->cod);
+        printf("\nInforme o código do produto: ");
+        scanf("%5s", compra->cod);
       }
       printf("Informe o nome do produto: ");
       scanf(" %14[^\n]", compra->nome);
@@ -206,21 +212,18 @@ void editaCompra(void) {
         printf("\nInforme a marca do produto: ");
         scanf(" %14[^\n]", compra->marca);
       }
-      printf("Informe a quantidade do produto: ");
-      scanf("%s", &compra->qntd);
-      getchar();
+      printf("Informe a quantidade disponivel do produto: ");
+      scanf("%d", &compra->qntd);
       while((validacaoEhNumero(compra->qntd)!=1)) {
         printf("inválido");
         printf("\nInforme a quantidade do produto: ");
-        scanf("%s", &compra->qntd);
-        getchar();
+        scanf("%d", &compra->qntd);
       }
-      (dataEhora(compra));
+      getchar();
       compra->status = '1';
       fseek(fp, (-1)*sizeof(Compra), SEEK_CUR);
       fwrite(compra, sizeof(Compra), 1, fp);
       printf("\nProduto editado com sucesso!!!\n");
-
     } else {
       printf("\nOk, os dados não foram alterados\n");
     }
@@ -229,7 +232,6 @@ void editaCompra(void) {
   }
   free(compra);
   fclose(fp);
-  system("cls || clear");
 }
 
 
@@ -249,12 +251,12 @@ void excluiCompra(void) {
   printf("= = = = = = = =  = = = \n");
   printf("= = Apagar Compra = = \n");
   printf("= = = = = = = = =  = = \n");
-  printf("Informe o nome do produto a ser apagado: ");
+  printf("Informe o código do produto a ser apagado: ");
   scanf(" %14[^\n]", procurado);
   compra = (Compra*) malloc(sizeof(Compra));
   achou = 0;
   while((!achou) && (fread(compra, sizeof(Compra), 1, fp))) {
-   if ((strcmp(compra->nome, procurado) == 0) && (compra->status == '1')) {
+   if ((strcmp(compra->cod, procurado) == 0) && (compra->status == '1')) {
      achou = 1;
    }
   }
@@ -317,7 +319,8 @@ void gravaCompra(Compra* compra) {
 
 
 void exibeCompra(Compra* compra) {
-  printf("Código: %s\n", compra->cod);
+  printf("Código da Empresa: %s\n", compra->cod2);
+  printf("Código do produto: %s\n", compra->cod);
   printf("Nome: %s\n", compra->nome);
   printf("Marca: %s\n", compra->marca);
   printf("Quantidade: %d\n", compra->qntd);
@@ -349,19 +352,19 @@ void dataEhora(Compra* compra) {
 
 int validacaoEhNumero(char c) {
   if (c>='0'&& c<='9') {
-    return 1;
+    return 0;
   }
   else {
-    return 0;
+    return 1;
   }
 }
 
 int validacaoPalavra(char s[]) {
-  int tam = strlen(s);
-  for(int i = 0; i < tam; i++){
-    char c = s[i];
-    if (c>='0'&& c<='9') {
-    return 0;
+  int tam;
+  tam = strlen(s) - 1;
+  for (int i = 0; i < tam; i++) {
+    if (!validacaoEhLetra(s[i])) {
+      return 0;
     }
   }
   return 1;
@@ -402,28 +405,28 @@ int validacaoEhLetra1(char c) {
   }
 }
 
-int validacaoCod(char *codi){
-  if(strlen(codi) != 6){
-      return 0;
-      }
-
-  else if((strcmp(codi,"000000") == 0) || (strcmp(codi,"111111") == 0) || (strcmp(codi,"222222") == 0) ||
-          (strcmp(codi,"333333") == 0) || (strcmp(codi,"444444") == 0) || (strcmp(codi,"555555") == 0) ||
-          (strcmp(codi,"666666") == 0) || (strcmp(codi,"777777") == 0) || (strcmp(codi,"888888") == 0) ||
-          (strcmp(codi,"999999") == 0)){
-      return 0;}
-
-  else if(strlen(codi) == 6){
-    int tam = strlen(codi);
-    for(int i = 0; i < tam; i++){
-      char c = codi[i];
-      if (c>='A' && c<='Z') {
+int validacaoCod2(char *codi){
+    if(strlen(codi) != 4)
         return 0;
-      }
-      else if (c>='a' && c<='z') {
+    else if((strcmp(codi,"0000") == 0) || (strcmp(codi,"1111") == 0) || (strcmp(codi,"2222") == 0) ||
+            (strcmp(codi,"3333") == 0) || (strcmp(codi,"4444") == 0) || (strcmp(codi,"5555") == 0) ||
+            (strcmp(codi,"6666") == 0) || (strcmp(codi,"7777") == 0) || (strcmp(codi,"8888") == 0) ||
+            (strcmp(codi,"9999") == 0))
         return 0;
-      }
+    else {
+      return 1;
     }
-  }
-  return 1;
+}
+
+int validacaoCod(char *codi){
+    if(strlen(codi) != 5)
+        return 0;
+    else if((strcmp(codi,"0000") == 0) || (strcmp(codi,"1111") == 0) || (strcmp(codi,"2222") == 0) ||
+            (strcmp(codi,"3333") == 0) || (strcmp(codi,"4444") == 0) || (strcmp(codi,"5555") == 0) ||
+            (strcmp(codi,"6666") == 0) || (strcmp(codi,"7777") == 0) || (strcmp(codi,"8888") == 0) ||
+            (strcmp(codi,"9999") == 0))
+        return 0;
+    else {
+      return 1;
+    }
 }
