@@ -35,7 +35,7 @@ int menuSobre(void) {
 
 void sobreOprograma(void){
   printf("\n\n");
-  printf("    *================================== SOBRE ==================================*\n");
+  printf("    *============================= SOBRE O PROGRAMA ============================*\n");
   printf("    |                                                                           |\n");
   printf("    |PROGRAMA DE CONTROLE DE ESTOQUES CRIADO UTILIZANDO ALOCACAO DINAMICA,      |\n");
   printf("    |STRUCTS E PONTEIROS, COMO FORMA DE AVALIACAO DA DISCIPLINA DE PROGRAMAÇÃO, |\n");
@@ -45,10 +45,11 @@ void sobreOprograma(void){
   printf("    |                                                                           |\n");
   printf("    |                              IDENTIFICACAO                                |\n");
   printf("    |                                                                           |\n");
-  printf("    |               UFRN CERES CAICÓ - SISTEMAS DE INFORMAÇÃO                   |\n");
+  printf("    |           ALUNAS DE SISTEMAS DE INFORMAÇÃO - UFRN CERES CAICÓ             |\n");
+  printf("    |                                                                           |\n");
   printf("    |RENATA ARAÚJO.                             WANESSA SILVA.                  |\n");
   printf("    |TEL:(84) 9 9912-3995                       TEL:(84) 9 9849-0496            |\n");
   printf("    |renatakarla02@gmail.com                    wanessaparelhas68@gmail.com     |\n");
-  printf("    |                                                                           |\n");
+  printf("    |github.com/renatak12                       github.com/wanessabezerra       |\n");
   printf("    *===========================================================================*\n");
 }
