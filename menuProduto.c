@@ -12,7 +12,7 @@ int validacaoCod(char *);
 typedef struct produto Prod;
 
 struct produto {
-  char cod[8];
+  char cod[6];
   char nome[15];
   char marca[15];
   int quant;
@@ -77,11 +77,11 @@ void cadastraProduto(void) {
   printf("= = = = = = = = = = = \n");
   produto = (Prod*) malloc(sizeof(Prod));
   printf("\nInforme o código do produto: ");
-  scanf("%7s", produto->cod);
+  scanf("%5s", produto->cod);
   while((validacaoCod(produto->cod)!=1)) {
     printf("inválido");
     printf("\nInforme o código do produto: ");
-    scanf("%7s", produto->cod);
+    scanf("%5s", produto->cod);
   }
   printf("Informe o nome do produto: ");
   scanf(" %14[^\n]", produto->nome);
@@ -128,12 +128,12 @@ void buscaProduto(void) {
   printf("= = = = = = = = = = = = \n");
   printf("= =  Buscar Produto = = \n");
   printf("= = = = = = = = = = = = \n");
-  printf("Informe o nome do produto a ser buscado: ");
+  printf("Informe o codigo do produto a ser buscado: ");
   scanf(" %14[^\n]", procurado);
   produto = (Prod*) malloc(sizeof(Prod));
   achou = 0;
   while((!achou) && (fread(produto, sizeof(Prod), 1, fp))) {
-   if ((strcmp(produto->nome, procurado) == 0) && (produto->status == '1')) {
+   if ((strcmp(produto->cod, procurado) == 0) && (produto->status == '1')) {
      achou = 1;
    }
   }
@@ -163,12 +163,12 @@ void editaProduto(void) {
   printf("= = = S G P e t = = = \n");
   printf("= = Editar produto = = \n");
   printf("= = = = = = = = = = = \n");
-  printf("Informe o nome do produto a ser alterado: ");
+  printf("Informe o codigo do produto a ser alterado: ");
   scanf(" %14[^\n]", procurado);
   produto = (Prod*) malloc(sizeof(Prod));
   achou = 0;
   while((!achou) && (fread(produto, sizeof(Prod), 1, fp))) {
-   if ((strcmp(produto->nome, procurado) == 0) && (produto->status == '1')) {
+   if ((strcmp(produto->cod, procurado) == 0) && (produto->status == '1')) {
      achou = 1;
    }
   }
@@ -238,12 +238,12 @@ void excluiProduto(void) {
   printf("= = = = = = = =  = = = \n");
   printf("= = Apagar Produto = = \n");
   printf("= = = = = = = = =  = = \n");
-  printf("Informe o nome do produto a ser apagado: ");
+  printf("Informe o codigo do produto a ser apagado: ");
   scanf(" %14[^\n]", procurado);
   produto = (Prod*) malloc(sizeof(Prod));
   achou = 0;
   while((!achou) && (fread(produto, sizeof(Prod), 1, fp))) {
-   if ((strcmp(produto->nome, procurado) == 0) && (produto->status == '1')) {
+   if ((strcmp(produto->cod, procurado) == 0) && (produto->status == '1')) {
      achou = 1;
    }
   }
@@ -369,12 +369,12 @@ int validacaoEhLetra1(char c) {
 }
 
 int validacaoCod(char *codi){
-    if(strlen(codi) != 6)
+    if(strlen(codi) != 5)
         return 0;
-    else if((strcmp(codi,"000000") == 0) || (strcmp(codi,"111111") == 0) || (strcmp(codi,"222222") == 0) ||
-            (strcmp(codi,"333333") == 0) || (strcmp(codi,"444444") == 0) || (strcmp(codi,"555555") == 0) ||
-            (strcmp(codi,"666666") == 0) || (strcmp(codi,"777777") == 0) || (strcmp(codi,"888888") == 0) ||
-            (strcmp(codi,"999999") == 0))
+    else if((strcmp(codi,"00000") == 0) || (strcmp(codi,"11111") == 0) || (strcmp(codi,"22222") == 0) ||
+            (strcmp(codi,"333333") == 0) || (strcmp(codi,"44444") == 0) || (strcmp(codi,"55555") == 0) ||
+            (strcmp(codi,"66666") == 0) || (strcmp(codi,"77777") == 0) || (strcmp(codi,"88888") == 0) ||
+            (strcmp(codi,"99999") == 0))
         return 0;
     else {
       return 1;
