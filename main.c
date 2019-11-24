@@ -16,6 +16,18 @@ struct clt {
   char status;
 };
 
+typedef struct noClt NoCliente;
+
+struct noClt {
+  char nome[20];
+  int nasc[3];
+  char cpf[12]; 
+  char email[20];
+  char telefone[12];
+  char status;
+  NoCliente* prox;
+}; 
+
 typedef struct produt Prod;
 
 struct produt {
@@ -25,6 +37,19 @@ struct produt {
   char qntd[4];
   char status;
 };
+
+
+typedef struct noProdut NoProd;
+
+struct noProdut {
+  char cod[6];
+  char nome[15];
+  char marca[15];
+  char qntd[4];
+  char status;
+  NoProd* prox;
+};
+
 
 typedef struct compr Compra;
 
@@ -38,6 +63,20 @@ struct compr {
   
 };
 
+
+typedef struct noCompr NoCompra;
+
+struct noCompr {
+  char cod[6];
+  char cod2[5];
+  char nome[15];
+  char marca[15];
+  char qntd[4];
+  char status;
+  NoCompra* prox;
+};
+
+
 typedef struct vend Venda;
 
 struct vend {
@@ -48,6 +87,18 @@ struct vend {
   char status;
 };
 
+
+typedef struct noVend NoVenda;
+
+struct noVend {
+  char cod[6];
+  char nome[15];
+  char marca[15];
+  char qntd[4];
+  char status;
+  NoVenda* prox;
+};
+
 int menuPrincipal(void);
 int menuPrincipalCliente(void);
 int menuCliente(void);
@@ -55,8 +106,8 @@ void cadastraCliente(void);
 void buscaCliente(void);
 void editaCliente(void);
 void excluiCliente(void);
-void exibeCliente(Cliente*);
 void gravaCliente(Cliente*);
+
 
 int menuPrincipalProduto(void);
 int menuProduto(void);
@@ -64,7 +115,6 @@ void cadastraProduto(void);
 void buscaProduto(void);
 void editaProduto(void);
 void excluiProduto(void);
-void exibeProduto(Prod*);
 void gravaProduto(Prod*);
 
 
@@ -75,9 +125,9 @@ void buscaCompra(void);
 void editaCompra(void);
 void excluiCompra(void);
 void listaCompra(void);
-void exibeCompra(Compra*);
 void gravaCompra(Compra*);
 void dataEhora1(Compra*);
+
 
 int menuPrincipalVenda(void);
 int menuVenda(void);
@@ -85,22 +135,36 @@ void cadastraVenda(void);
 void buscaVenda(void);
 void editaVenda(void);
 void excluiVenda(void);
-void exibeVenda(Venda*);
 void gravaVenda(Venda*);
 void dataEhora2(Venda*);
 
+
 int menuPrincipalRelatorio(void);
 int menuRelatorio(void);
-void listaClientes(void);
-void listaProdutos(void);
-void listaCompra(void);
-void listaVendas(void);
+NoCliente* listaOrdenadaCliente(void);
+NoCliente* listaDiretaCliente(void);
+NoProd* listaOrdenadaProduto(void);
+NoCompra* listaInvertidaCompra(void);
+NoVenda* listaInvertidaVenda(void);
+void exibeCliente(Cliente*);
+void exibeProduto(Prod*);
+void exibeCompra(Compra*);
+void exibeVenda(Venda*);
+void exibeListaCliente();
+void exibeListaProduto();
+void exibeListaCompra();
+void exibeListaVenda();
 
+//void listaClientes(void);
+//void listaProdutos(void);
+//void listaCompra(void);
+//void listaVendas(void);
 
 
 int menuPrincipalSobre(void);
 int menuSobre(void);
 void sobreOprograma(void);
+
 
 int ehLetra(char);
 int validacaoEhNumero(char);
@@ -112,7 +176,6 @@ int validacaoCod(char *);
 int validacaoCod2(char *);
 int validacaoPalavra1(char[]);
 int validacaoEhLetra(char);
-
 int bissexto(int);
 int dataValida(int,int,int);
 
@@ -794,19 +857,19 @@ void cadastraCompra(void) {
   compra = (Compra*) malloc(sizeof(Compra));
 
   printf("\nCódigo da empresa: ");
-  scanf("%4s", compra->cod2);
-  while((validacaoCod2(compra->cod2)!=1)) {
+  scanf("%6s", compra->cod);
+  while((validacaoCod2(compra->cod)!=1)) {
     printf("\nCódigo inválido, somente 6 dígitos, tente novamente.\n");
     printf("Código da empresa: ");
-    scanf("%4s", compra->cod2);
+    scanf("%6s", compra->cod);
   }
 
   printf("\nCódigo do produto: ");
-  scanf("%5s", compra->cod);
-  while((validacaoCod(compra->cod)!=1)) {
-    printf("inválido");
+  scanf("%5s", compra->cod2);
+  while((validacaoCod(compra->cod2)!=1)) {
+    printf("\nCódigo inválido, somente 5 dígitos, tente novamente.\n");
     printf("Código do produto: ");
-    scanf("%5s", compra->cod);
+    scanf("%5s", compra->cod2);
   }
 
   printf("Nome do produto: ");
@@ -911,12 +974,20 @@ void editaCompra(void) {
     printf("Deseja realmente editar este produto (s/n)? ");
     scanf("%c", &resp);
     if (resp == 's' || resp == 'S') {
+      printf("\nCódigo da empresa: ");
+      scanf("%6s", compra->cod);
+      while((validacaoCod2(compra->cod)!=1)) {
+        printf("\nCódigo inválido, somente 6 dígitos, tente novamente.\n");
+        printf("Código da empresa: ");
+        scanf("%6s", compra->cod);
+      }
+
       printf("\nCódigo do produto: ");
-      scanf("%5s", compra->cod);
-      while((validacaoCod(compra->cod)!=1)) {
-        printf("\nCódigo inválido, tente novamente.\n");
+      scanf("%5s", compra->cod2);
+      while((validacaoCod(compra->cod2)!=1)) {
+        printf("\nCódigo inválido, somente 5 dígitos, tente novamente.\n");
         printf("Código do produto: ");
-        scanf("%5s", compra->cod);
+        scanf("%5s", compra->cod2);
       }
 
       printf("Nome do produto: ");
@@ -1343,22 +1414,32 @@ void exibeVenda(Venda* venda) {
 /////////////// menu relatório /////////////////////
 int menuPrincipalRelatorio(void){
     int opcao;
+    NoCliente* lista;
+    NoProd* lista1;
+    NoCompra* lista2;
+    NoVenda* lista3;
     opcao = menuRelatorio();
     while (opcao != 0) {
         switch (opcao) {
-            case 1 :  listaClientes();
-                    break;
-            case 2 :  listaProdutos();
-                    break;
-            case 3 :  listaCompra();
-                    break;
-            case 4 :  listaVendas();
-                    break;
-            case 0 : return 0;
-                    break;
+            case 1 :  lista = listaOrdenadaCliente();
+                      exibeListaCliente(lista);
+                      break;
+            case 2 :  lista = listaDiretaCliente();
+                      exibeListaCliente(lista);
+                      break;
+            case 3 :  lista1 = listaOrdenadaProduto();
+                      exibeListaProduto(lista1);
+                      break;
+            case 4 :  lista2 = listaInvertidaCompra();
+                      exibeListaCompra(lista2);
+                      break;
+            case 5 :  lista3 = listaInvertidaVenda();
+                      exibeListaVenda(lista3);
+                      break;
+            case 0 :  return 0;
+                      break;
             default : printf("Opção inválida, digite um número válido\n\n");
-                    break;
-
+                      break;
         }
     opcao = menuRelatorio();
     }
@@ -1371,11 +1452,11 @@ int menuRelatorio(void) {
     printf ("= = = = = = = = = = = = =\n"
             "=  R E L A T Ó R I O S  =\n"
             "= = = = = = = = = = = = =\n"
-            "\n[1] - Lista de Clientes\n"
-            "[2] - Lista de Produtos\n"
-            "[3] - Lista todas as Compras\n"
-            "[4] - Lista todos as Vendas\n"
-            "[5] - Relatórios\n"
+            "\n[1] - Lista Ordenada de Clientes\n"
+            "[2] - Lista Direta de Clientes\n"
+            "[3] - Lista de Produtos\n"
+            "[4] - Lista de Compras\n"
+            "[5] - Lista de Vendas\n"
             "[0] - Retornar\n");
     printf("Escolha sua opção: ");
     scanf("%d", &opcao);
@@ -1383,7 +1464,274 @@ int menuRelatorio(void) {
     return opcao;
 }
 
-void listaClientes(void) {
+NoCliente* listaOrdenadaCliente(void) {
+  FILE* fp;
+  Cliente* cliente;
+  NoCliente* noClt;
+  NoCliente* lista;
+
+  lista = NULL;
+  fp = fopen("cliente.dat", "rb");
+  if (fp == NULL) {
+    printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+    printf("Não é possível continuar o programa...\n");
+    exit(1);
+  }
+
+  cliente = (Cliente*) malloc(sizeof(Cliente));
+  while(fread(cliente, sizeof(Cliente), 1, fp)) {
+    if (cliente->status == '1') {
+      noClt = (NoCliente*) malloc(sizeof(NoCliente));
+      strcpy(noClt->nome, cliente->nome);
+      noClt->nasc[0] = cliente->nasc[0];
+      noClt->nasc[1] = cliente->nasc[1];
+      noClt->nasc[2] = cliente->nasc[2];
+      strcpy(noClt->cpf, cliente->cpf);
+      strcpy(noClt->email, cliente->email);
+      strcpy(noClt->telefone, cliente->telefone);
+      noClt->status = cliente->status;
+
+      if (lista == NULL) {
+        lista = noClt;
+        noClt->prox = NULL;
+      } else if (strcmp(noClt->nome,lista->nome) < 0) {
+        noClt->prox = lista;
+        lista = noClt;
+      } else {
+        NoCliente* anter = lista;
+        NoCliente* atual = lista->prox;
+        while ((atual != NULL) && strcmp(atual->nome,noClt->nome) < 0) {
+          anter = atual;
+          atual = atual->prox;
+        }
+        anter->prox = noClt;
+        noClt->prox = atual;
+      }
+    }
+  }
+  fclose(fp);
+  free(cliente);
+  return lista;
+}
+
+NoCliente* listaDiretaCliente(void) {
+  FILE* fp;
+  Cliente* cliente;
+  NoCliente* noClt;
+  NoCliente* lista;
+  NoCliente* ultimo;
+
+  lista = NULL;
+  fp = fopen("cliente.dat", "rb");
+  if (fp == NULL) {
+    printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+    printf("Não é possível continuar o programa...\n");
+    exit(1);
+  }
+
+  cliente = (Cliente*) malloc(sizeof(Cliente));
+  while(fread(cliente, sizeof(Cliente), 1, fp)) {
+    if (cliente->status == '1') {
+      noClt = (NoCliente*) malloc(sizeof(NoCliente));
+      strcpy(noClt->nome, cliente->nome);
+      noClt->nasc[0] = cliente->nasc[0];
+      noClt->nasc[1] = cliente->nasc[1];
+      noClt->nasc[2] = cliente->nasc[2];
+      strcpy(noClt->cpf, cliente->cpf);
+      strcpy(noClt->email, cliente->email);
+      strcpy(noClt->telefone, cliente->telefone);
+      noClt->status = cliente->status;
+      noClt->prox = NULL;
+      if (lista == NULL) {
+        lista = noClt;
+      } else {
+        ultimo->prox = noClt;
+      }
+      ultimo = noClt;
+    }
+  }
+  fclose(fp);
+  free(cliente);
+  return lista;
+}
+
+void exibeListaCliente(NoCliente* lista) {
+  printf("\n\n");
+  printf("= = = = = = = = = = = = = = = = = = \n");
+  printf("= = Listagem de Clientes: A - Z = = \n");
+  printf("= = = = = = = = = = = = = = = = = = \n");
+  while (lista != NULL) {
+    printf("Nome: %s\n", lista->nome);
+    printf("Nascimento: %d/%d/%d\n",lista->nasc[0], lista->nasc[1],lista->nasc[2]);
+    printf("CPF: %s\n", lista->cpf);
+    printf("E-mail: %s\n", lista->email);
+    printf("Telefone: %s\n", lista->telefone);
+    printf("Status: %c\n", lista->status);
+    printf("\n");
+    lista = lista->prox;
+  }
+}
+
+NoProd* listaOrdenadaProduto(void) {
+  FILE* fp;
+  Prod* produto;
+  NoProd* noProdut;
+  NoProd* lista1;
+
+  lista1 = NULL;
+  fp = fopen("produto.dat", "rb");
+  if (fp == NULL) {
+    printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+    printf("Não é possível continuar o programa...\n");
+    exit(1);
+  }
+
+  produto = (Prod*) malloc(sizeof(Prod));
+  while(fread(produto, sizeof(Prod), 1, fp)) {
+    if (produto->status == '1') {
+      noProdut = (NoProd*) malloc(sizeof(NoProd));
+      strcpy(noProdut->cod, produto->cod);
+      strcpy(noProdut->nome, produto->nome);
+      strcpy(noProdut->marca, produto->marca);
+      strcpy(noProdut->qntd, produto->qntd);
+      noProdut->status = produto->status;
+
+      if (lista1 == NULL) {
+        lista1 = noProdut;
+        noProdut->prox = NULL;
+      } else if (strcmp(noProdut->nome,lista1->nome) < 0) {
+        noProdut->prox = lista1;
+        lista1 = noProdut;
+      } else {
+        NoProd* anter = lista1;
+        NoProd* atual = lista1->prox;
+        while ((atual != NULL) && strcmp(atual->nome,noProdut->nome) < 0) {
+          anter = atual;
+          atual = atual->prox;
+        }
+        anter->prox = noProdut;
+        noProdut->prox = atual;
+      }
+    }
+  }
+  fclose(fp);
+  free(produto);
+  return lista1;
+}
+
+void exibeListaProduto(NoProd* lista1) {
+  printf("\n\n");
+  printf("= = = = = = = = = = = = = = =\n");
+  printf("= = Listagem de Produtos = = \n");
+  printf("= = = = = = = = = = = = = = =\n");
+  while (lista1 != NULL) {
+    printf("Código: %s\n", lista1->cod);
+    printf("Nome: %s\n",lista1->nome);
+    printf("Marca: %s\n", lista1->marca);
+    printf("Quantidade: %s\n", lista1->qntd);
+    printf("\n");
+    lista1 = lista1->prox;
+  }
+}
+
+NoCompra* listaInvertidaCompra(void) {
+  FILE* fp;
+  Compra* compra;
+  NoCompra* noCompr;
+  NoCompra* lista2;
+
+  lista2 = NULL;
+  fp = fopen("compra.dat", "rb");
+  if (fp == NULL) {
+    printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+    printf("Não é possível continuar o programa...\n");
+    exit(1);
+  }
+
+  compra = (Compra*) malloc(sizeof(Compra));
+  while(fread(compra, sizeof(Compra), 1, fp)) {
+    if (compra->status == '1') {
+      noCompr = (NoCompra*) malloc(sizeof(NoCompra));
+      strcpy(noCompr->cod, compra->cod);
+      strcpy(noCompr->cod2, compra->cod2);
+      strcpy(noCompr->nome, compra->nome);
+      strcpy(noCompr->marca, compra->marca);
+      strcpy(noCompr->qntd, compra->qntd);
+      noCompr->status = compra->status;
+      noCompr->prox = lista2;
+      lista2 = noCompr;
+    }
+  }
+  fclose(fp);
+  free(compra);
+  return lista2;
+}
+
+void exibeListaCompra(NoCompra* lista2) {
+  printf("\n\n");
+  printf("= = = = = = = = = = = = = = =\n");
+  printf("= = Relatório de Compras = = \n");
+  printf("= = = = = = = = = = = = = = =\n");
+  while (lista2 != NULL) {
+    printf("Código da Empresa: %s\n", lista2->cod);
+    printf("\nCódigo do Produto: %s\n", lista2->cod2);
+    printf("Nome: %s\n",lista2->nome);
+    printf("Marca: %s\n", lista2->marca);
+    printf("Quantidade: %s\n", lista2->qntd);
+    printf("\n");
+    lista2 = lista2->prox;
+  }
+}
+
+NoVenda* listaInvertidaVenda(void) {
+  FILE* fp;
+  Venda* venda;
+  NoVenda* noVend;
+  NoVenda* lista3;
+
+  lista3 = NULL;
+  fp = fopen("venda.dat", "rb");
+  if (fp == NULL) {
+    printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+    printf("Não é possível continuar o programa...\n");
+    exit(1);
+  }
+
+  venda = (Venda*) malloc(sizeof(Venda));
+  while(fread(venda, sizeof(Venda), 1, fp)) {
+    if (venda->status == '1') {
+      noVend = (NoVenda*) malloc(sizeof(NoVenda));
+      strcpy(noVend->cod, venda->cod);
+      strcpy(noVend->nome, venda->nome);
+      strcpy(noVend->marca, venda->marca);
+      strcpy(noVend->qntd, venda->qntd);
+      noVend->status = venda->status;
+      noVend->prox = lista3;
+      lista3 = noVend;
+    }
+  }
+  fclose(fp);
+  free(venda);
+  return lista3;
+}
+
+void exibeListaVenda(NoVenda* lista3) {
+  printf("\n\n");
+  printf("= = = = = = = = = = = = = = =\n");
+  printf("= = Relatório de Vendas = = \n");
+  printf("= = = = = = = = = = = = = = =\n");
+  while (lista3 != NULL) {
+    printf("\nCódigo do Produto: %s\n", lista3->cod);
+    printf("Nome: %s\n",lista3->nome);
+    printf("Marca: %s\n", lista3->marca);
+    printf("Quantidade: %s\n", lista3->qntd);
+    printf("\n");
+    lista3 = lista3->prox;
+  }
+}
+
+
+/*void listaClientes(void) {
   FILE* fp;
   Cliente* cliente;
   fp = fopen("cliente.dat", "rb");
@@ -1485,7 +1833,7 @@ void listaVendas(void) {
   printf("Aperte a tecla ENTER para continuar. ");
   getchar();
   system("cls || clear");
-}
+}*/
 
 /////////////// Sobre /////////////////
 
