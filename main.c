@@ -2,25 +2,12 @@
 #include <stdlib.h>
 #include <locale.h>
 #include <string.h>
-#include <math.h>
 #include <time.h>
-
-
-typedef struct clt Cliente;
-
-struct clt {
-  char nome[20];
-  int nasc[3];
-  char cpf[12]; 
-  char email[40];
-  char telefone[12];
-  char status;
-};
 
 typedef struct noClt NoCliente;
 
 struct noClt {
-  char nome[20];
+  char nome[40];
   int nasc[3];
   char cpf[12]; 
   char email[40];
@@ -29,38 +16,16 @@ struct noClt {
   NoCliente* prox;
 }; 
 
-typedef struct produt Prod;
-
-struct produt {
-  char cod[6];
-  char nome[15];
-  char marca[15];
-  char status;
-  char qntd[4];
-  char preco[5];
-};
-
 typedef struct noProdut NoProd;
 
 struct noProdut {
   char cod[6];
-  char nome[15];
-  char marca[15];
+  char nome[40];
+  char marca[40];
+  char qntd[6];
+  char preco[7];
   char status;
-  char qntd[4];
-  char preco[6];
   NoProd* prox;
-};
-
-
-typedef struct compr Compra;
-
-struct compr {
-  char cod[6];
-  char cod2[5];
-  char qntd[4];
-  char status;
-  
 };
 
 
@@ -68,21 +33,9 @@ typedef struct noCompr NoCompra;
 
 struct noCompr {
   char cod[6];
-  char cod2[5];
-  char qntd[4];
+  char qntd[5];
   char status;
   NoCompra* prox;
-};
-
-
-typedef struct vend Venda;
-
-struct vend {
-  char cod[6];
-  char cpf[12];
-  char qntd[4];
-  char status;
-  time_t dataVenda;
 };
 
 
@@ -91,9 +44,8 @@ typedef struct noVend NoVenda;
 struct noVend {
   char cod[6];
   char cpf[12];
-  char qntd[4];
+  char qntd[5];
   char status;
-  time_t dataVenda;
   NoVenda* prox;
 };
 
@@ -101,40 +53,40 @@ int menuPrincipal(void);
 int menuPrincipalCliente(void);
 int menuCliente(void);
 void cadastraCliente(void);
-Cliente* buscaCliente(char*);
+void buscaCliente(void);
 void editaCliente(void);
 void excluiCliente(void);
-void gravaCliente(Cliente*);
+void gravaCliente(NoCliente*);
 
 
 int menuPrincipalProduto(void);
 int menuProduto(void);
 void cadastraProduto(void);
-Prod* buscaProduto(char*);
+void buscaProduto(void);
 void editaProduto(void);
 void excluiProduto(void);
-void gravaProduto(Prod*);
+void gravaProduto(NoProd*);
 
 
 int menuPrincipalCompra(void);
 int menuCompra(void);
 void cadastraCompra(void);
-Compra* buscaCompra(char*);
+void buscaCompra(void);
 void editaCompra(void);
 void excluiCompra(void);
 void listaCompra(void);
-void gravaCompra(Compra*);
-void dataEhora1(Compra*);
+void gravaCompra(NoCompra*);
+void dataEhora1(NoCompra*);
 
 
 int menuPrincipalVenda(void);
 int menuVenda(void);
 void cadastraVenda(void);
-Venda* buscaVenda(char*);
+void buscaVenda(void);
 void editaVenda(void);
 void excluiVenda(void);
-void gravaVenda(Venda*);
-void dataEhora2(Venda*);
+void gravaVenda(NoVenda*);
+void dataEhora2(NoVenda*);
 
 
 int menuPrincipalRelatorio(void);
@@ -144,10 +96,10 @@ NoCliente* listaDiretaCliente(void);
 NoProd* listaOrdenadaProduto(void);
 NoCompra* listaInvertidaCompra(void);
 NoVenda* listaInvertidaVenda(void);
-void exibeCliente(Cliente*);
-void exibeProduto(Prod*);
-void exibeCompra(Compra*);
-void exibeVenda(Venda*);
+void exibeCliente(NoCliente*);
+void exibeProduto(NoProd*);
+void exibeCompra(NoCompra*);
+void exibeVenda(NoVenda*);
 void exibeListaCliente();
 void exibeListaProduto();
 void exibeListaCompra();
@@ -166,8 +118,6 @@ void sobreOprograma(void);
 
 int ehLetra(char);
 int validacaoEhNumero(char);
-int validacaoEhNumero1(char*);
-int validacaoEhNumero2(char*);
 int validacaoPalavra(char[]);
 int validacaoCpf(char *);
 int validacaoEmail( const char *);
@@ -178,6 +128,7 @@ int validacaoPalavra1(char[]);
 int validacaoEhLetra(char);
 int bissexto(int);
 int dataValida(int,int,int);
+int validacaoCpf(char *);
 
 
 int main(void) {
@@ -233,15 +184,16 @@ int menuPrincipal(void) {
 
 int menuPrincipalCliente(void){
     int opcao;
-    Cliente* busca;
     opcao = menuCliente();
     while (opcao != 0) {
         switch (opcao) {
             case 1 :  cadastraCliente();
                     break;
-            case 2 :  editaCliente();
+            case 2 :  buscaCliente();
                     break;
-            case 3 :  excluiCliente();
+            case 3 :  editaCliente();
+                    break;
+            case 4 :  excluiCliente();
                     break;
             case 0 : return 0;
                     break;
@@ -261,8 +213,9 @@ int menuCliente(void) {
             "=    C L I E N T E    =\n"
             "= = = = = = = = = = = = \n"
             "\n[1] - Cadastrar Cliente\n"
-            "[2] - Atualizar Cliente\n"
-            "[3] - Deletar Cliente\n"
+            "[2] - Pesquisar Cliente\n"
+            "[3] - Atualizar Cliente\n"
+            "[4] - Deletar Cliente\n"
             "[0] - Retornar\n");
     printf("\nEscolha sua opção: ");
     scanf("%d", &opcao);
@@ -272,33 +225,33 @@ int menuCliente(void) {
 
 
 void cadastraCliente(void) {
-  Cliente* cliente;
+  NoCliente* cliente;
   int dia, mes, ano;
   char resp;
   do{
     printf("\n\n");
     printf("= = = = = = = = = = = = =\n");
-    printf("= = Cadastrar Cliente = =\n");
+    printf("=   Cadastrar Cliente   =\n");
     printf("= = = = = = = = = = = = =\n");
-    cliente = (Cliente*) malloc(sizeof(Cliente));
+    cliente = (NoCliente*) malloc(sizeof(NoCliente));
 
     printf("\nNome: ");
-    scanf(" %19[^\n]", cliente->nome);
+    scanf(" %39[^\n]", cliente->nome);
     while((validacaoPalavra(cliente->nome)!= 1)) {
       printf("\nNome inválido, tente novamente.\n");
       printf("Nome: ");
-      scanf(" %19[^\n]", cliente->nome);
+      scanf(" %39[^\n]", cliente->nome);
     }
 
     printf("Data de nascimento no formato(dd/mm/aaaa): ");
     scanf(" %d/%d/%d", &cliente->nasc[0], &cliente->nasc[1],&cliente->nasc[2]);
     getchar();
     while((dataValida(cliente->nasc[0], cliente->nasc[1],cliente->nasc[2]))!= 1){
-      printf("Data inválida: %d/%d/%d, tente novamente. ", cliente->nasc[0], cliente->nasc[1],cliente->nasc[2]);
-      printf("\nData: ");
-      scanf("%d/%d/%d", &cliente->nasc[0], &cliente->nasc[1],&cliente->nasc[2]);
-      getchar();
-    }
+              printf("Data inválida: %d/%d/%d, tente novamente. ", cliente->nasc[0], cliente->nasc[1],cliente->nasc[2]);
+              printf("\nData: ");
+              scanf("%d/%d/%d", &cliente->nasc[0], &cliente->nasc[1],&cliente->nasc[2]);
+              getchar();
+            }
 
     printf("CPF: ");
     scanf("%11s", cliente->cpf);
@@ -316,59 +269,70 @@ void cadastraCliente(void) {
       scanf(" %39[^\n]", cliente->email);
     }
     
-    printf("Telefone: ");
-    scanf("%11s", cliente->telefone);
+    printf("\nTelefone: ");
+    scanf("%9s", cliente->telefone);
     getchar();
     while((validacaoTelefone(cliente->telefone)!=1)) {
       printf("\nTelefone inválido, tente novamente.\n");
       printf("Telefone: ");
-      scanf("%11s", cliente->telefone);
+      scanf("%9s", cliente->telefone);
     }
 
     cliente->status = '1';
     gravaCliente(cliente);
-    printf("Deseja comprar outro produto (s/n)? ");
+    printf("Deseja cadastrar outro cliente (s/n)? ");
     scanf("%c", &resp);
-    getchar();
     system("cls || clear");
 
   }while(resp == 's' || resp == 'S');
-
+  getchar();
 }
-/*
-Cliente* buscaCliente(char *cpf){ // Cliente* no lugar do void e *cpf
-    Cliente* cliente;
+
+void buscaCliente(void){
     FILE* fp;
-    char listacliente;
+    NoCliente* cliente;
     int achou;
-    char procurado[15];
+    char procurado[12];
     fp = fopen("cliente.dat", "rb");
     if (fp == NULL) {
         printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
         printf("Não é possível continuar o programa...\n");
         exit(1);
     }
+    printf("\n\n");
+    printf("= = = = = = = = = = = = = \n");
+    printf("=   Pesquisar Cliente   = \n");
+    printf("= = = = = = = = = = = = =\n");
+    printf("CPF: ");
+    scanf("%11s", procurado);
+    while((validacaoCpf(procurado)!=1)) {
+      printf("\nNúmero inválido, tente novamente.\n");
+      printf("CPF: ");
+      scanf("%11s", procurado);
+    }
+    
+    cliente = (NoCliente*) malloc(sizeof(NoCliente));
     achou = 0;
-    while((!achou) && (fread(cliente, sizeof(Cliente), 1, fp))) {
+    while((!achou) && (fread(cliente, sizeof(NoCliente), 1, fp))) {
         if ((strcmp(cliente->cpf, procurado) == 0) && (cliente->status == '1')) {
             achou = 1;
         }
     }
     fclose(fp);
-    if (achou) {//exibeCliente
-        return (cliente);
+    if (achou) {
+        exibeCliente(cliente);
     } else {
         printf("O cliente %s não foi encontrado...\n", procurado);
     }
     free(cliente);
-}*/
+}
 
-void editaCliente() {
+void editaCliente(void) {
     FILE* fp;
-    Cliente* cliente;
+    NoCliente* cliente;
     int achou;
     char resp;
-    char procurado[15];
+    char procurado[12];
     fp = fopen("cliente.dat", "r+b");
     if (fp == NULL) {
     printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
@@ -377,20 +341,19 @@ void editaCliente() {
     }
     printf("\n\n");
     printf("= = = = = = = = = = = =\n");
-    printf("= = Editar Cliente = =\n");
+    printf("=   Editar Cliente    =\n");
     printf("= = = = = = = = = = = =\n");
-    printf("CPF: ");
-    scanf("%11s", cliente->cpf);
-    while((validacaoCpf(cliente->cpf)!=1)) {
+    printf("CPF do cliente: ");
+    scanf("%11s", procurado);
+    while((validacaoCpf(procurado)!=1)) {
       printf("\nNúmero inválido, tente novamente.\n");
       printf("CPF: ");
-      scanf("%11s", cliente->cpf);
+      scanf("%11s", procurado);
     }
-
-    cliente = (Cliente*) malloc(sizeof(Cliente));
+    cliente = (NoCliente*) malloc(sizeof(NoCliente));
     achou = 0;
-    while((!achou) && (fread(cliente, sizeof(Cliente), 1, fp))) {
-        if ((strcmp(cliente->cpf, procurado) == 0) && (cliente->status == '1')) {
+    while((!achou) && (fread(cliente, sizeof(NoCliente), 1, fp))) {
+        if ((strcmp(cliente->nome, procurado) == 0) && (cliente->status == '1')) {
             achou = 1;
         }
     }
@@ -401,11 +364,11 @@ void editaCliente() {
         scanf("%c", &resp);
         if (resp == 's' || resp == 'S') {
             printf("\nNome: ");
-            scanf(" %19[^\n]", cliente->nome);
+            scanf(" %39[^\n]", cliente->nome);
             while((validacaoPalavra(cliente->nome)!= 1)) {
               printf("\nNome inválido, tente novamente.\n");
               printf("Nome: ");
-              scanf(" %19[^\n]", cliente->nome);
+              scanf(" %39[^\n]", cliente->nome);
             }
 
             printf("Data de nascimento no formato(dd/mm/aaaa): ");
@@ -436,17 +399,17 @@ void editaCliente() {
             }
             
             printf("\nTelefone: ");
-            scanf("%11s", cliente->telefone);
+            scanf("%9s", cliente->telefone);
             getchar();
             while((validacaoTelefone(cliente->telefone)!=1)) {
               printf("\nTelefone inválido, tente novamente.\n");
               printf("Telefone: ");
-              scanf("%11s", cliente->telefone);
+              scanf("%9s", cliente->telefone);
             }
 
             cliente->status = '1';
-            fseek(fp, (-1)*sizeof(Cliente), SEEK_CUR);
-            fwrite(cliente, sizeof(Cliente), 1, fp);
+            fseek(fp, (-1)*sizeof(NoCliente), SEEK_CUR);
+            fwrite(cliente, sizeof(NoCliente), 1, fp);
             printf("\ncliente editado com sucesso!!!\n");
         } else {
             printf("\nOk, os dados não foram alterados\n");
@@ -459,12 +422,11 @@ void editaCliente() {
 }
 
 void excluiCliente(void) {
-  FILE* fp;
-  Cliente* cliente;
-  int achou;
-  char resp;
-  char procurado[15];
-  do{
+    FILE* fp;
+    NoCliente* cliente;
+    int achou;
+    char resp;
+    char procurado[15];
     fp = fopen("cliente.dat", "r+b");
     if (fp == NULL) {
         printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
@@ -475,17 +437,16 @@ void excluiCliente(void) {
     printf("= = = = = = = = = = = =\n");
     printf("=   Excluir Cliente   = \n");
     printf("= = = = = = = = = = = =\n");
-
-    printf("\nInforme o CPF do cliente a ser apagado: ");
-    scanf("%11s", cliente->cpf);
-    while((validacaoCpf(cliente->cpf)!=1)) {
-      printf("\nNúmero inválido, tente novamente.\n");
-      printf("CPF: ");
-      scanf("%11s", cliente->cpf);
-    }
-    cliente = (Cliente*) malloc(sizeof(Cliente));
+    printf("CPF: ");
+      scanf("%11s", procurado);
+      while((validacaoCpf(procurado)!=1)) {
+        printf("\nNúmero inválido, tente novamente.\n");
+        printf("CPF: ");
+        scanf("%11s", procurado);
+      }
+    cliente = (NoCliente*) malloc(sizeof(NoCliente));
     achou = 0;
-    while((!achou) && (fread(cliente, sizeof(Cliente), 1, fp))) {
+    while((!achou) && (fread(cliente, sizeof(NoCliente), 1, fp))) {
         if ((strcmp(cliente->cpf, procurado) == 0) && (cliente->status == '1')) {
             achou = 1;
         }
@@ -497,8 +458,8 @@ void excluiCliente(void) {
         scanf("%c", &resp);
         if (resp == 's' || resp == 'S') {
             cliente->status = '0';
-            fseek(fp, -1*sizeof(Cliente), SEEK_CUR);
-            fwrite(cliente, sizeof(Cliente), 1, fp);
+            fseek(fp, -1*sizeof(NoCliente), SEEK_CUR);
+            fwrite(cliente, sizeof(NoCliente), 1, fp);
             printf("\nCliente excluído com sucesso!!!\n");
         } else {
             printf("\nOk, os dados não foram alterados\n");
@@ -508,16 +469,13 @@ void excluiCliente(void) {
     }
     free(cliente);
     fclose(fp);
-    printf("Deseja excluir outro cadastro(s/n)? ");
-    scanf("%c", &resp);
+    printf("Aperte a tecla ENTER para continuar. ");
     getchar();
     system("cls || clear");
-
-  }while(resp == 's' || resp == 'S');
 }
 
 
-void gravaCliente(Cliente* cliente) {
+void gravaCliente(NoCliente* cliente) {
     FILE* fp;
     fp = fopen("cliente.dat", "ab");
     if (fp == NULL) {
@@ -525,11 +483,11 @@ void gravaCliente(Cliente* cliente) {
         printf("Não é possível continuar o programa...\n");
         exit(1);
     }
-    fwrite(cliente, sizeof(Cliente), 1, fp);
+    fwrite(cliente, sizeof(NoCliente), 1, fp);
     fclose(fp);
 }
 
-void exibeCliente(Cliente* cliente) {
+void exibeCliente(NoCliente* cliente) {
     printf("Nome: %s\n", cliente->nome);
     printf("Nascimento: %d/%d/%d\n",cliente->nasc[0], cliente->nasc[1],cliente->nasc[2]);
     printf("CPF: %s\n", cliente->cpf);
@@ -539,7 +497,9 @@ void exibeCliente(Cliente* cliente) {
     printf("Status: %c\n", cliente->status);
     printf("\n");
 }
+
 /////////////// menu produto ///////////////
+
 int menuPrincipalProduto(void) {
   int opcao;
   opcao = menuProduto();
@@ -547,11 +507,11 @@ int menuPrincipalProduto(void) {
     switch (opcao) {
       case 1 :  cadastraProduto();
                 break;
-     // case 2 :  buscaProduto();
-             //   break;
-      case 2 :  editaProduto();
+      case 2 :  buscaProduto();
                 break;
-      case 3 :  excluiProduto();
+      case 3 :  editaProduto();
+                break;
+      case 4 :  excluiProduto();
                 break;
       case 0 : return 0;
                 break;
@@ -566,12 +526,13 @@ int menuPrincipalProduto(void) {
 int menuProduto(void) {
   int op;
   printf("\n\n");
-  printf("= = = = = = = = = = = = \n");
-  printf("=    P R O D U T O    = \n");
-  printf("= = = = = = = = = = = = \n");
+  printf("= = = = = = = = = = = = = = \n");
+  printf("=   Cadastro do Produto   = \n");
+  printf("= = = = = = = = = = = = = = \n");
   printf("\n[1] - Cadastrar produto\n");
-  printf("[2] - Atualizar produto\n");
-  printf("[3] - Deletar produto\n");
+  printf("[2] - Pesquisar produto\n");
+  printf("[3] - Atualizar produto\n");
+  printf("[4] - Deletar produto\n");
   printf("[0] - Retornar\n");
   printf("\nEscolha sua opção: ");
   scanf("%d", &op);
@@ -581,14 +542,15 @@ int menuProduto(void) {
 
 
 void cadastraProduto(void) {
-  Prod* produto;
+  NoProd* produto;
   char resp;
   do{
     printf("\n\n");
-    printf("= = = = = = = = = = = = = \n");
-    printf("=   Cadastrar Produto   = \n");
-    printf("= = = = = = = = = = = = =\n");
-    produto = (Prod*) malloc(sizeof(Prod));
+    printf("= = = = = = = = = = = = \n");
+    printf("=  Cadastrar Produto  = \n");
+    printf("= = = = = = = = = = = =\n");
+    
+    produto = (NoProd*) malloc(sizeof(NoProd));
     printf("\nCódigo do produto: ");
     scanf("%5s", produto->cod);
     while((validacaoCod(produto->cod)!=1)) {
@@ -598,27 +560,27 @@ void cadastraProduto(void) {
     }
 
     printf("Nome do produto: ");
-    scanf(" %14[^\n]", produto->nome);
+    scanf(" %39s", produto->nome);
     while((validacaoPalavra(produto->nome)!= 1)) {
       printf("\nNome inválido, tente novamente.\n");
       printf("Nome do produto: ");
-      scanf(" %14[^\n]", produto->nome);
+      scanf("%39s", produto->nome);
     }
 
     printf("Marca do produto: ");
-    scanf(" %14[^\n]", produto->marca);
+    scanf(" %29[^\n]", produto->marca);
     while((validacaoPalavra1(produto->marca)!= 1)) {
       printf("\nMarca inválida, tente novamente.\n");
       printf("Marca do produto: ");
-      scanf(" %14[^\n]", produto->marca);
+      scanf(" %29[^\n]", produto->marca);
     }
 
-    printf("Preço unitário do produto: ");
-    scanf("%6s ,", produto->preco);
+    printf("Preço do produto: ");
+    scanf("%6s", produto->preco);
     getchar();
-    while((validacaoEhNumero1(produto->preco)!=1)) {
+    while((validacaoEhNumero(*produto->preco)!=1)) {
       printf("\nPreço inválido, tente novamente.\n");
-      printf("\nPreço unitário do produto: ");
+      printf("Preço do produto: ");
       scanf("%6s", produto->preco);
       getchar();
     }
@@ -626,27 +588,26 @@ void cadastraProduto(void) {
     printf("Quantidade do produto: ");
     scanf("%3s", produto->qntd);
     getchar();
-    while((validacaoEhNumero2(produto->qntd)!=1)) {
+    while((validacaoEhNumero(*produto->qntd)!=1)) {
       printf("\nQuantidade inválida, tente novamente.\n");
-      printf("\nQuantidade do produto: ");
+      printf("Quantidade do produto: ");
       scanf("%3s", produto->qntd);
       getchar();
     }
 
     produto->status = '1';
     gravaProduto(produto);
-
     printf("Deseja cadastrar outro produto (s/n)? ");
     scanf("%c", &resp);
     system("cls || clear");
 
   }while(resp == 's' || resp == 'S');
+  getchar();
 }
 
-/*
-Prod* buscaProduto(char *cod) {
+void buscaProduto(void) {
   FILE* fp;
-  Prod* produto;
+  NoProd* produto;
   int achou;
   char procurado[15];
   fp = fopen("produto.dat", "rb");
@@ -657,18 +618,18 @@ Prod* buscaProduto(char *cod) {
   }
   printf("\n\n");
   printf("= = = = = = = = = = = = \n");
-  printf("= =  Buscar Produto = = \n");
+  printf("=    Buscar Produto   = \n");
   printf("= = = = = = = = = = = = \n");
-  printf("\nCódigo do produto: ");
-  scanf("%5s", produto->cod);
-  while((validacaoCod(produto->cod)!=1)) {
+  printf("Informe o código do produto a ser buscado:\n");
+  scanf("%5s", procurado);
+  while((validacaoCod(procurado)!=1)) {
     printf("\nCódigo inválido, tente novamente.\n");
     printf("Código do produto: ");
-    scanf("%5s", produto->cod);
+    scanf("%5s", procurado);
   }
-  produto = (Prod*) malloc(sizeof(Prod));
+  produto = (NoProd*) malloc(sizeof(NoProd));
   achou = 0;
-  while((!achou) && (fread(produto, sizeof(Prod), 1, fp))) {
+  while((!achou) && (fread(produto, sizeof(NoProd), 1, fp))) {
    if ((strcmp(produto->cod, procurado) == 0) && (produto->status == '1')) {
      achou = 1;
    }
@@ -683,170 +644,141 @@ Prod* buscaProduto(char *cod) {
   printf("Aperte a tecla ENTER para continuar. ");
   getchar();
   system("cls || clear");
-}*/
+}
 
 
 void editaProduto(void) {
   FILE* fp;
-  Prod* produto;
+  NoProd* produto;
   int achou;
   char resp;
   char procurado[15];
-  do{
-    fp = fopen("produto.dat", "r+b");
-    if (fp == NULL) {
-      printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
-      printf("Não é possível continuar o programa...\n");
-      exit(1);
-    }
-    printf("\n\n");
-    printf("= = = = = = = = = = = = \n");
-    printf("=    Editar produto   = \n");
-    printf("= = = = = = = = = = = =\n");
-    printf("\nInforme o código do produto a ser alterado: ");
-    scanf("%5s", produto->cod);
-    while((validacaoCod(produto->cod)!=1)) {
-      printf("\nCódigo inválido, tente novamente.\n");
-      printf("Código do produto: ");
+  fp = fopen("produto.dat", "r+b");
+  if (fp == NULL) {
+    printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+    printf("Não é possível continuar o programa...\n");
+    exit(1);
+  }
+  printf("\n\n");
+  printf("= = = = = = = = = = = \n");
+  printf("=  Editar produto   = \n");
+  printf("= = = = = = = = = = = \n");
+  printf("Informe o código do produto a ser alterado: ");
+  scanf(" %14[^\n]", procurado);
+  produto = (NoProd*) malloc(sizeof(NoProd));
+  achou = 0;
+  while((!achou) && (fread(produto, sizeof(NoProd), 1, fp))) {
+   if ((strcmp(produto->cod, procurado) == 0) && (produto->status == '1')) {
+     achou = 1;
+   }
+  }
+  if (achou) {
+    exibeProduto(produto);
+    getchar();
+    printf("Deseja realmente editar este produto (s/n)? ");
+    scanf("%c", &resp);
+    if (resp == 's' || resp == 'S') {
+      printf("\nCódigo do produto: ");
       scanf("%5s", produto->cod);
-    }
-    produto = (Prod*) malloc(sizeof(Prod));
-    achou = 0;
-    while((!achou) && (fread(produto, sizeof(Prod), 1, fp))) {
-    if ((strcmp(produto->cod, procurado) == 0) && (produto->status == '1')) {
-      achou = 1;
-    }
-    }
-    if (achou) {
-      exibeProduto(produto);
-      getchar();
-      printf("Deseja realmente editar este produto (s/n)? ");
-      scanf("%c", &resp);
-      if (resp == 's' || resp == 'S') {
-        printf("\nCódigo do produto: ");
+      while((validacaoCod(produto->cod)!=1)) {
+        printf("\nCódigo inválido, tente novamente.\n");
+        printf("Código do produto: ");
         scanf("%5s", produto->cod);
-        while((validacaoCod(produto->cod)!=1)) {
-          printf("\nCódigo inválido, tente novamente.\n");
-          printf("Código do produto: ");
-          scanf("%5s", produto->cod);
-        }
+      }
 
+      printf("Nome do produto: ");
+      scanf(" %14[^\n]", produto->nome);
+      while((validacaoPalavra(produto->nome)!= 1)) {
+        printf("\nNome inválido, tente novamente.\n");
         printf("Nome do produto: ");
         scanf(" %14[^\n]", produto->nome);
-        while((validacaoPalavra(produto->nome)!= 1)) {
-          printf("\nNome inválido, tente novamente.\n");
-          printf("Nome do produto: ");
-          scanf(" %14[^\n]", produto->nome);
-        }
+      }
 
+      printf("Marca do produto: ");
+      scanf(" %14[^\n]", produto->marca);
+      while((validacaoPalavra1(produto->marca)!= 1)) {
+        printf("\nMarca inválida, tente novamente.\n");
         printf("Marca do produto: ");
         scanf(" %14[^\n]", produto->marca);
-        while((validacaoPalavra1(produto->marca)!= 1)) {
-          printf("\nMarca inválida, tente novamente.\n");
-          printf("Marca do produto: ");
-          scanf(" %14[^\n]", produto->marca);
-        }
+      }
 
-        printf("Preço unitário do produto: ");
-        scanf("%6s ,", produto->preco);
-        getchar();
-        while((validacaoEhNumero1(produto->preco)!=1)) {
-          printf("\nPreço inválido, tente novamente.\n");
-          printf("\nPreço unitário do produto: ");
-          scanf("%6s", produto->preco);
-          getchar();
-        }
-
-        printf("Quantidade do produto: ");
+      printf("Quantidade do produto: ");
+      scanf("%3s", produto->qntd);
+      getchar();
+      while((validacaoEhNumero(*produto->qntd)!=1)) {
+        printf("\nQuantidade inválida, tente novamente.\n");
+        printf("\nQuantidade do produto: ");
         scanf("%3s", produto->qntd);
         getchar();
-        while((validacaoEhNumero(*produto->qntd)!=1)) {
-          printf("\nQuantidade inválida, tente novamente.\n");
-          printf("\nQuantidade do produto: ");
-          scanf("%3s", produto->qntd);
-          getchar();
-        }
-
-        produto->status = '1';
-        fseek(fp, (-1)*sizeof(Prod), SEEK_CUR);
-        fwrite(produto, sizeof(Prod), 1, fp);
-        printf("\nProduto editado com sucesso!!!\n");
-      } else {
-        printf("\nOk, os dados não foram alterados\n");
       }
+
+      produto->status = '1';
+      fseek(fp, (-1)*sizeof(NoProd), SEEK_CUR);
+      fwrite(produto, sizeof(NoProd), 1, fp);
+      printf("\nProduto editado com sucesso!!!\n");
     } else {
-      printf("O produto %s não foi encontrado...\n", procurado);
+      printf("\nOk, os dados não foram alterados\n");
     }
-    free(produto);
-    fclose(fp);
-    printf("Deseja editar outro produto (s/n)? ");
-    scanf("%c", &resp);
-    system("cls || clear");
-  }while(resp == 's' || resp == 'S');
+  } else {
+    printf("O produto %s não foi encontrado...\n", procurado);
+  }
+  free(produto);
+  fclose(fp);
+  printf("Aperte a tecla ENTER para continuar. ");
   getchar();
+  system("cls || clear");
 }
 
 
 void excluiProduto(void) {
   FILE* fp;
-  Prod* produto;
+  NoProd* produto;
   int achou;
   char resp;
   char procurado[15];
-  do{
-    fp = fopen("produto.dat", "r+b");
-    if (fp == NULL) {
-      printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
-      printf("Não é possível continuar o programa...\n");
-      exit(1);
-    }
-    printf("\n\n");
-    printf("= = = = = = = =  = = = \n");
-    printf("=   Apagar Produto   = \n");
-    printf("= = = = = = = = =  = = \n");
-    printf("\nInforme o código do produto a ser apagado: ");
-    scanf("%5s", produto->cod);
-    while((validacaoCod(produto->cod)!=1)) {
-      printf("\nCódigo inválido, tente novamente.\n");
-      printf("Código do produto: ");
-      scanf("%5s", produto->cod);
-    }
-
-    produto = (Prod*) malloc(sizeof(Prod));
-    achou = 0;
-    while((!achou) && (fread(produto, sizeof(Prod), 1, fp))) {
-    if ((strcmp(produto->cod, procurado) == 0) && (produto->status == '1')) {
-      achou = 1;
-    }
-    }
-    if (achou) {
-      exibeProduto(produto);
-      getchar();
-      printf("Deseja realmente apagar este produto (s/n)? ");
-      scanf("%c", &resp);
-      if (resp == 's' || resp == 'S') {
-        produto->status = '0';
-        fseek(fp, -1*sizeof(Prod), SEEK_CUR);
-        fwrite(produto, sizeof(Prod), 1, fp);
-        printf("\nProduto excluído com sucesso!!!\n");
-      } else {
-        printf("\nOk, os dados não foram alterados\n");
-      }
-    } else {
-      printf("O produto %s não foi encontrado...\n", procurado);
-    }
-    free(produto);
-    fclose(fp);
-
-    printf("Deseja apagar outro produto (s/n)? ");
+  fp = fopen("produto.dat", "r+b");
+  if (fp == NULL) {
+    printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+    printf("Não é possível continuar o programa...\n");
+    exit(1);
+  }
+  printf("\n\n");
+  printf("= = = = = = = =  = = = \n");
+  printf("= = Apagar Produto = = \n");
+  printf("= = = = = = = = =  = = \n");
+  printf("Informe o código do produto a ser apagado: ");
+  scanf(" %14[^\n]", procurado);
+  produto = (NoProd*) malloc(sizeof(NoProd));
+  achou = 0;
+  while((!achou) && (fread(produto, sizeof(NoProd), 1, fp))) {
+   if ((strcmp(produto->cod, procurado) == 0) && (produto->status == '1')) {
+     achou = 1;
+   }
+  }
+  if (achou) {
+    exibeProduto(produto);
+    getchar();
+    printf("Deseja realmente apagar este produto (s/n)? ");
     scanf("%c", &resp);
-    system("cls || clear");
-
-  }while(resp == 's' || resp == 'S');
+    if (resp == 's' || resp == 'S') {
+      produto->status = '0';
+      fseek(fp, -1*sizeof(NoProd), SEEK_CUR);
+      fwrite(produto, sizeof(NoProd), 1, fp);
+      printf("\nProduto excluído com sucesso!!!\n");
+     } else {
+       printf("\nOk, os dados não foram alterados\n");
+     }
+  } else {
+    printf("O produto %s não foi encontrado...\n", procurado);
+  }
+  free(produto);
+  fclose(fp);
+  printf("Aperte a tecla ENTER para continuar. ");
   getchar();
+  system("cls || clear");
 }
 
-void gravaProduto(Prod* produto) {
+void gravaProduto(NoProd* produto) {
   FILE* fp;
   fp = fopen("produto.dat", "ab");
   if (fp == NULL) {
@@ -854,17 +786,17 @@ void gravaProduto(Prod* produto) {
     printf("Não é possível continuar o programa...\n");
     exit(1);
   }
-  fwrite(produto, sizeof(Prod), 1, fp);
+  fwrite(produto, sizeof(NoProd), 1, fp);
   fclose(fp);
 }
 
 
-void exibeProduto(Prod* produto) {
+void exibeProduto(NoProd* produto) {
   printf("Código: %s\n", produto->cod);
   printf("Nome: %s\n", produto->nome);
   printf("Marca: %s\n", produto->marca);
-  printf("Preço: %d\n", *produto->preco);
-  printf("Quantidade: %d\n", *produto->qntd);
+  printf("Preço: R$%s\n ", produto->preco);
+  printf("Quantidade: %s\n", produto->qntd);
   printf("\n");
 }
 
@@ -877,9 +809,11 @@ int menuPrincipalCompra(void){
       switch (opcao) {
         case 1 :  cadastraCompra();
                   break;
-        case 2 :  editaCompra();
+        case 2 :  buscaCompra();
                   break;
-        case 3 :  excluiCompra();
+        case 3 :  editaCompra();
+                  break;
+        case 4 :  excluiCompra();
                   break;
         case 0 : return 0;
                   break;
@@ -894,13 +828,14 @@ int menuPrincipalCompra(void){
 int menuCompra(void) {
   int op;
   printf("\n\n");
-  printf("= = = = = = = = = = \n");
-  printf("=   C O M P R A   = \n");
-  printf("= = = = = = = = = = \n");
-  printf("\n[1] - Cadastrar Compra\n");
-  printf("[2] - Atualizar Compra\n");
-  printf("[3] - Deletar Compra\n");
-  printf("[0] - Retornar\n");
+  printf("= = = = = = = = = = = = = = = = = = = \n");
+  printf("= = = =  Compras de Produto  = = = = \n");
+  printf("= = = = = = = = = = = = = = = = = = = \n");
+  printf("\n1 - Cadastrar Compras\n");
+  printf("2 - Pesquisar Compras\n");
+  printf("3 - Atualizar Compras\n");
+  printf("4 - Deletar Compras\n");
+  printf("0 - Retornar\n");
   printf("\nEscolha sua opção: ");
   scanf("%d", &op);
   system("cls || clear");
@@ -908,60 +843,45 @@ int menuCompra(void) {
 }
 
 void cadastraCompra(void) {
-  Compra* compra;
-  Prod* produto;
-  char resp;
-  do{
-    printf("\n\n");
-    printf(" = = = = = = = = = = = = = = = = = =\n");
-    printf(" =   Cadastrar Compra de Produtos  =\n");
-    printf(" = = = = = = = = = = = = = = = = = = \n");
+  NoCompra* compra;
+  printf("\n\n");
+  printf(" = = = = = = = = = = = = = = = = =\n");
+  printf(" =  Cadastrar Compra de Produtos =\n");
+  printf(" = = = = = = = = = = = = = = = = =\n");
 
-    compra = (Compra*) malloc(sizeof(Compra));
+  compra = (NoCompra*) malloc(sizeof(NoCompra));
 
-    printf("\nCódigo da empresa: ");
-    scanf("%6s", compra->cod);
-    while((validacaoCod2(compra->cod)!=1)) {
-      printf("\nCódigo inválido, somente 6 dígitos, tente novamente.\n");
-      printf("Código da empresa: ");
-      scanf("%6s", compra->cod);
-    }
-
+  printf("\nCódigo do produto: ");
+  scanf("%5s", compra->cod);
+  while((validacaoCod(compra->cod)!=1)) {
+    printf("\nCódigo inválido, somente 5 dígitos, tente novamente.\n");
     printf("Código do produto: ");
-    scanf("%5s", compra->cod2);
-    while((validacaoCod(compra->cod2)!=1)) {
-      printf("\nCódigo inválido, somente 5 dígitos, tente novamente.\n");
-      printf("Código do produto: ");
-      scanf("%5s", compra->cod2);
-    }
+    scanf("%5s", compra->cod);
+  }
 
+
+  printf("Quantidade do produto: ");
+  scanf("%s", compra->qntd);
+  getchar();
+  while((validacaoEhNumero(*compra->qntd)!=1)) {
+    printf("\nQuantidade inválida, tente novamente.\n");
     printf("Quantidade do produto: ");
     scanf("%s", compra->qntd);
     getchar();
-    while((validacaoEhNumero(*compra->qntd)!=1)) {
-      printf("\nQuantidade inválida, tente novamente.\n");
-      printf("Quantidade do produto: ");
-      scanf("%s", compra->qntd);
-      getchar();
-    }
+  }
 
-    (dataEhora1(compra));
-    compra->status = '1';
-    gravaCompra(compra);
-
-    printf("Deseja comprar outro produto (s/n)? ");
-    scanf("%c", &resp);
-    system("cls || clear");
-
-  }while(resp == 's' || resp == 'S');
-
-
+  (dataEhora1(compra));
+  compra->status = '1';
+  gravaCompra(compra);
+  printf("Aperte a tecla ENTER para continuar. ");
+  getchar();
+  system("cls || clear");
 }
 
-/*
+
 void buscaCompra(void) {
   FILE* fp;
-  Compra* compra;
+  NoCompra* compra;
   int achou;
   char procurado[15];
   fp = fopen("compra.dat", "rb");
@@ -974,16 +894,11 @@ void buscaCompra(void) {
   printf("= = = = = = = = = = = = \n");
   printf("= =  Buscar Compras = = \n");
   printf("= = = = = = = = = = = = \n");
-  printf("\nCódigo do produto: ");
-  scanf("%5s", compra->cod2);
-  while((validacaoCod(compra->cod2)!=1)) {
-    printf("\nCódigo inválido, somente 5 dígitos, tente novamente.\n");
-    printf("Código do produto: ");
-    scanf("%5s", compra->cod2);
-  }
-  compra = (Compra*) malloc(sizeof(Compra));
+  printf("\nInforme o código do produto a ser buscado: ");
+  scanf(" %14[^\n]", procurado);
+  compra = (NoCompra*) malloc(sizeof(NoCompra));
   achou = 0;
-  while((!achou) && (fread(compra, sizeof(Compra), 1, fp))) {
+  while((!achou) && (fread(compra, sizeof(NoCompra), 1, fp))) {
    if ((strcmp(compra->cod, procurado) == 0) && (compra->status == '1')) {
      achou = 1;
    }
@@ -999,167 +914,127 @@ void buscaCompra(void) {
   getchar();
   system("cls || clear");
 }
-*/
+
 void editaCompra(void) {
   FILE* fp;
-  Compra* compra;
+  NoCompra* compra;
   int achou;
   char resp;
   char procurado[15];
-  do{
-    fp = fopen("compra.dat", "r+b");
-    if (fp == NULL) {
-      printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
-      printf("Não é possível continuar o programa...\n");
-      exit(1);
-    }
-    printf("\n\n");
-    printf("= = = = = = = = = = = \n");
-    printf("=   Editar compras  = \n");
-    printf("= = = = = = = = = = = \n");
-    printf("Informe o código do produto a ser alterado: ");
-    scanf("%5s", compra->cod2);
-    while((validacaoCod(compra->cod2)!=1)) {
-      printf("\nCódigo inválido, somente 5 dígitos, tente novamente.\n");
-      printf("Código do produto: ");
-      scanf("%5s", compra->cod2);
-    }
-    compra = (Compra*) malloc(sizeof(Compra));
-    achou = 0;
-    while((!achou) && (fread(compra, sizeof(Compra), 1, fp))) {
-    if ((strcmp(compra->cod, procurado) == 0) && (compra->status == '1')) {
-      achou = 1;
-    }
-    }
-    if (achou) {
-      exibeCompra(compra);
+  fp = fopen("compra.dat", "r+b");
+  if (fp == NULL) {
+    printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+    printf("Não é possível continuar o programa...\n");
+    exit(1);
+  }
+  printf("\n\n");
+  printf("= = = = = = = = = = = \n");
+  printf("= = Editar compras = = \n");
+  printf("= = = = = = = = = = = \n");
+  printf("Informe o código do produto a ser alterado: ");
+  scanf(" %14[^\n]", procurado);
+  compra = (NoCompra*) malloc(sizeof(NoCompra));
+  achou = 0;
+  while((!achou) && (fread(compra, sizeof(NoCompra), 1, fp))) {
+   if ((strcmp(compra->cod, procurado) == 0) && (compra->status == '1')) {
+     achou = 1;
+   }
+  }
+  if (achou) {
+    exibeCompra(compra);
+    getchar();
+    printf("Deseja realmente editar este produto (s/n)? ");
+    scanf("%c", &resp);
+    if (resp == 's' || resp == 'S') {
+
+      printf("\nCódigo do produto: ");
+      scanf("%5s", compra->cod);
+      while((validacaoCod(compra->cod)!=1)) {
+        printf("\nCódigo inválido, somente 5 dígitos, tente novamente.\n");
+        printf("Código do produto: ");
+        scanf("%5s", compra->cod);
+      }
+
+      printf("Quantidade do produto: ");
+      scanf("%3s", compra->qntd);
       getchar();
-      printf("Deseja realmente editar este produto (s/n)? ");
-      scanf("%c", &resp);
-      if (resp == 's' || resp == 'S') {
-        printf("\nCódigo da empresa: ");
-        scanf("%6s", compra->cod);
-        while((validacaoCod2(compra->cod)!=1)) {
-          printf("\nCódigo inválido, somente 6 dígitos, tente novamente.\n");
-          printf("Código da empresa: ");
-          scanf("%6s", compra->cod);
-        }
-
-        printf("\nCódigo do produto: ");
-        scanf("%5s", compra->cod2);
-        while((validacaoCod(compra->cod2)!=1)) {
-          printf("\nCódigo inválido, somente 5 dígitos, tente novamente.\n");
-          printf("Código do produto: ");
-          scanf("%5s", compra->cod2);
-        }
-
-        /*printf("Nome do produto: ");
-        scanf(" %14[^\n]", compra->nome);
-        while((validacaoPalavra(compra->nome)!= 1)) {
-          printf("\nNome inválido, tente novamente.\n");
-          printf("Nome do produto: ");
-          scanf(" %14[^\n]", compra->nome);
-        }
-
-        printf("Marca do produto: ");
-        scanf(" %14[^\n]", compra->marca);
-        while((validacaoPalavra1(compra->marca)!= 1)) {
-          printf("\nMarca inválida, tente novamente.\n");
-          printf("Marca do produto: ");
-          scanf(" %14[^\n]", compra->marca);
-        }*/
-
-        printf("Quantidade do produto: ");
+      while((validacaoEhNumero(*compra->qntd)!=1)) {
+        printf("\nQuantidade inválida, tente novamente.\n");
+        printf("\nQuantidade do produto: ");
         scanf("%3s", compra->qntd);
         getchar();
-        while((validacaoEhNumero(*compra->qntd)!=1)) {
-          printf("\nQuantidade inválida, tente novamente.\n");
-          printf("\nQuantidade do produto: ");
-          scanf("%3s", compra->qntd);
-          getchar();
-        }
-        (dataEhora1(compra));
-        compra->status = '1';
-        printf("Aperte a tecla ENTER para continuar. ");
-        getchar();
-        fseek(fp, (-1)*sizeof(Compra), SEEK_CUR);
-        fwrite(compra, sizeof(Compra), 1, fp);
-        printf("\nProduto editado com sucesso!!!\n");
-
-      } else {
-        printf("\nOk, os dados não foram alterados\n");
       }
-    } else {
-      printf("O produto %s não foi encontrado...\n", procurado);
-    }
-    free(compra);
-    fclose(fp);
-      printf("Deseja comprar outro produto (s/n)? ");
-      scanf("%c", &resp);
-      system("cls || clear");
+      (dataEhora1(compra));
+      compra->status = '1';
+      printf("Aperte a tecla ENTER para continuar. ");
+      getchar();
+      fseek(fp, (-1)*sizeof(NoCompra), SEEK_CUR);
+      fwrite(compra, sizeof(NoCompra), 1, fp);
+      printf("\nProduto editado com sucesso!!!\n");
 
-  }while(resp == 's' || resp == 'S');
+    } else {
+      printf("\nOk, os dados não foram alterados\n");
+    }
+  } else {
+    printf("O produto %s não foi encontrado...\n", procurado);
+  }
+  free(compra);
+  fclose(fp);
+  printf("Aperte a tecla ENTER para continuar. ");
+  getchar();
+  system("cls || clear");
 }
 
 
 void excluiCompra(void) {
   FILE* fp;
-  Compra* compra;
+  NoCompra* compra;
   int achou;
   char resp;
   char procurado[15];
-  do{
-    fp = fopen("compra.dat", "r+b");
-    if (fp == NULL) {
-      printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
-      printf("Não é possível continuar o programa...\n");
-      exit(1);
-    }
-    printf("\n\n");
-    printf("= = = = = = = = = = = \n");
-    printf("=   Apagar Compra   = \n");
-    printf("= = = = = = = = = = = \n");
-    printf("\nInforme o código do produto a ser apagado: ");
-    scanf("%5s", compra->cod2);
-    while((validacaoCod(compra->cod2)!=1)) {
-      printf("\nCódigo inválido, somente 5 dígitos, tente novamente.\n");
-      printf("Código do produto: ");
-      scanf("%5s", compra->cod2);
-    }
-
-    compra = (Compra*) malloc(sizeof(Compra));
-    achou = 0;
-    while((!achou) && (fread(compra, sizeof(Compra), 1, fp))) {
-    if ((strcmp(compra->cod, procurado) == 0) && (compra->status == '1')) {
-      achou = 1;
-    }
-    }
-    if (achou) {
-      exibeCompra(compra);
-      getchar();
-      printf("Deseja realmente apagar este produto (s/n)? ");
-      scanf("%c", &resp);
-      if (resp == 's' || resp == 'S') {
-        compra->status = '0';
-        fseek(fp, -1*sizeof(Compra), SEEK_CUR);
-        fwrite(compra, sizeof(Compra), 1, fp);
-        printf("\nProduto excluído com sucesso!!!\n");
-      } else {
-        printf("\nOk, os dados não foram alterados\n");
-      }
-    } else {
-      printf("O produto %s não foi encontrado...\n", procurado);
-    }
-    fclose(fp);
-    free(compra);
-    printf("Deseja apagar a compra de outro produto (s/n)? ");
+  fp = fopen("compra.dat", "r+b");
+  if (fp == NULL) {
+    printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+    printf("Não é possível continuar o programa...\n");
+    exit(1);
+  }
+  printf("\n\n");
+  printf("= = = = = = = =  = = = \n");
+  printf("= = Apagar Compra = = \n");
+  printf("= = = = = = = = =  = = \n");
+  printf("Informe o código do produto a ser apagado: ");
+  scanf(" %14[^\n]", procurado);
+  compra = (NoCompra*) malloc(sizeof(NoCompra));
+  achou = 0;
+  while((!achou) && (fread(compra, sizeof(NoCompra), 1, fp))) {
+   if ((strcmp(compra->cod, procurado) == 0) && (compra->status == '1')) {
+     achou = 1;
+   }
+  }
+  if (achou) {
+    exibeCompra(compra);
+    getchar();
+    printf("Deseja realmente apagar este produto (s/n)? ");
     scanf("%c", &resp);
-    system("cls || clear");
-
-  }while(resp == 's' || resp == 'S');
+    if (resp == 's' || resp == 'S') {
+      compra->status = '0';
+      fseek(fp, -1*sizeof(NoCompra), SEEK_CUR);
+      fwrite(compra, sizeof(NoCompra), 1, fp);
+      printf("\nProduto excluído com sucesso!!!\n");
+     } else {
+       printf("\nOk, os dados não foram alterados\n");
+     }
+  } else {
+    printf("O produto %s não foi encontrado...\n", procurado);
+  }
+  fclose(fp);
+  free(compra);
+  printf("Aperte a tecla ENTER para continuar. ");
+  getchar();
+  system("cls || clear");
 }
 
-void gravaCompra(Compra* compra) {
+void gravaCompra(NoCompra* compra) {
   FILE* fp;
   fp = fopen("compra.dat", "ab");
   if (fp == NULL) {
@@ -1167,16 +1042,13 @@ void gravaCompra(Compra* compra) {
     printf("Não é possível continuar o programa...\n");
     exit(1);
   }
-  fwrite(compra, sizeof(Compra), 1, fp);
+  fwrite(compra, sizeof(NoCompra), 1, fp);
   fclose(fp);
 }
 
 
-void exibeCompra(Compra* compra) {
-  printf("Código da Empresa: %s\n", compra->cod2);
+void exibeCompra(NoCompra* compra) {
   printf("Código do Produto: %s\n", compra->cod);
-  //printf("Nome: %s\n",produto->nome);
-  //printf("Marca: %s\n", produto->marca);
   printf("Quantidade: %s\n", compra->qntd);
   (dataEhora1(compra));
   printf("\n");
@@ -1193,9 +1065,11 @@ int menuPrincipalVenda(void){
       switch (opcao) {
         case 1 :  cadastraVenda();
                   break;
-        case 2 :  editaVenda();
+        case 2 :  buscaVenda();
                   break;
-        case 3 :  excluiVenda();
+        case 3 :  editaVenda();
+                  break;
+        case 4 :  excluiVenda();
                   break;
         case 0 : return 0;
                   break;
@@ -1210,13 +1084,14 @@ int menuPrincipalVenda(void){
 int menuVenda(void) {
   int opcao;
   printf("\n\n");
-  printf("= = = = = = = = = = = = = = = = = = = = =\n");
-  printf("=   V E N D A   D E   P R O D U T O S   =\n");
-  printf("= = = = = = = = = = = = = = = = = = = = =\n");
-  printf("\n[1] - Cadastrar Venda\n");
-  printf("[2] - Alterar Venda\n");
-  printf("[3] - Excluir Venda\n");
-  printf("[0] - Retornar\n");
+  printf("= = = = = = = = = = = = = = = = = =  \n");
+  printf("= = = =  Venda de Produtos  = = = = \n");
+  printf("= = = = = = = = = = = = = = = = = =  \n");
+  printf("\n1 - Cadastrar Venda\n");
+  printf("2 - Pesquisar Venda\n");
+  printf("3 - Alterar Venda\n");
+  printf("4 - Excluir Venda\n");
+  printf("0 - Retornar\n");
   printf("\nEscolha sua opção: ");
   scanf("%d", &opcao);
   system("cls || clear");
@@ -1225,68 +1100,42 @@ int menuVenda(void) {
 
 
 void cadastraVenda(void) {
-  Venda* venda;
-  Cliente* cliente;
-  Prod* produto;
-  float valor;
-  char resp;
-  do{
-    printf("\n\n");
-    printf(" = = = = = = = = = = =\n");
-    printf(" =   Efetuar Venda   =\n");
-    printf(" = = = = = = = = = = =\n");
-    venda = (Venda*) malloc(sizeof(Venda));
+  NoVenda* venda;
+  printf("\n\n");
+  printf(" = = = = = = = = = =\n");
+  printf(" =  Efetuar Venda  =\n");
+  printf(" = = = = = = = = = =  \n");
+  venda = (NoVenda*) malloc(sizeof(NoVenda));
 
-    printf("\nCódigo do produto: ");
+  printf("\nCódigo do produto: ");
+  scanf("%5s", venda->cod);
+  while((validacaoCod(venda->cod)!=1)) {
+    printf("\nCódigo inválido, tente novamente.\n");
+    printf("Código do produto: ");
     scanf("%5s", venda->cod);
-    while((validacaoCod(venda->cod)!=1)) {
-      printf("\nCódigo inválido, tente novamente.\n");
-      printf("Código do produto: ");
-      scanf("%5s", venda->cod);
-    }
+  }
 
-    //busca = buscarCliente(cliente ->cpf);
-
-    /*printf("Nome do produto: ");
-    scanf(" %14[^\n]", venda->nome);
-    while((validacaoPalavra(venda->nome)!= 1)) {
-      printf("\nNome inválido, tente novamente.\n");
-      printf("Nome do produto: ");
-      scanf(" %14[^\n]", venda->nome);
-    }
-
-    printf("Marca do produto: ");
-    scanf(" %14[^\n]", venda->marca);
-    while((validacaoPalavra1(venda->marca)!= 1)) {
-      printf("\nMarca inválida, tente novamente.\n");
-      printf("Marca do produto: ");
-      scanf(" %14[^\n]", venda->marca);
-    }*/
-
-    printf("Quantidade do produto: ");
+  printf("Quantidade do produto: ");
+  scanf("%3s", venda->qntd);
+  getchar();
+  while((validacaoEhNumero(*venda->qntd)!=1)) {
+    printf("\nQuantidade inválida, tente novamente.\n");
+    printf("\nQuantidade do produto: ");
     scanf("%3s", venda->qntd);
     getchar();
-    while((validacaoEhNumero(*venda->qntd)!=1)) {
-      printf("\nQuantidade inválida, tente novamente.\n");
-      printf("\nQuantidade do produto: ");
-      scanf("%3s", venda->qntd);
-      getchar();
-    }               
+  }
 
-    //valor = (produto->preco) * (venda->qntd);
-    (dataEhora2(venda));
-    venda->status = '1';
-    gravaVenda(venda);
-    printf("Deseja vender outro produto (s/n)? ");
-    scanf("%c", &resp);
-    system("cls || clear");
-
-  }while(resp == 's' || resp == 'S');
+  (dataEhora2(venda));
+  venda->status = '1';
+  gravaVenda(venda);
+  printf("Aperte a tecla ENTER para continuar. ");
+  getchar();
+  system("cls || clear");
 }
 
-/*Venda* buscaVenda(){
+void buscaVenda(void){
     FILE* fp;
-    Venda* venda;
+    NoVenda* venda;
     int achou;
     char procurado[15];
     fp = fopen("venda.dat", "rb");
@@ -1308,9 +1157,9 @@ void cadastraVenda(void) {
       scanf("%5s", venda->cod);
     }
 
-    venda = (Venda*) malloc(sizeof(Venda));
+    venda = (NoVenda*) malloc(sizeof(NoVenda));
     achou = 0;
-    while((!achou) && (fread(venda, sizeof(Venda), 1, fp))) {
+    while((!achou) && (fread(venda, sizeof(NoVenda), 1, fp))) {
         if ((strcmp(venda->cod, procurado) == 0) && (venda->status == '1')) {
             achou = 1;
         }
@@ -1325,11 +1174,11 @@ void cadastraVenda(void) {
     printf("Aperte a tecla ENTER para continuar. ");
     getchar();
     system("cls || clear");
-}*/
+}
 
 void editaVenda(void) {
     FILE* fp;
-    Venda* venda;
+    NoVenda* venda;
     int achou;
     char resp;
     char procurado[15];
@@ -1350,9 +1199,9 @@ void editaVenda(void) {
       printf("Nome do produto vendido a ser alterado: ");
       scanf(" %14[^\n]", procurado);
     }
-    venda = (Venda*) malloc(sizeof(Venda));
+    venda = (NoVenda*) malloc(sizeof(NoVenda));
     achou = 0;
-    while((!achou) && (fread(venda, sizeof(Venda), 1, fp))) {
+    while((!achou) && (fread(venda, sizeof(NoVenda), 1, fp))) {
         if ((strcmp(venda->cod, procurado) == 0) && (venda->status == '1')) {
             achou = 1;
         }
@@ -1371,22 +1220,6 @@ void editaVenda(void) {
               scanf("%5s", venda->cod);
             }
 
-            /*printf("Nome do produto: ");
-            scanf(" %14[^\n]", venda->nome);
-            while((validacaoPalavra(venda->nome)!= 1)) {
-              printf("\nNome inválido, tente novamente.\n");
-              printf("Nome do produto: ");
-              scanf(" %14[^\n]", venda->nome);
-            }
-
-            printf("Marca do produto: ");
-            scanf(" %14[^\n]", venda->marca);
-            while((validacaoPalavra1(venda->marca)!= 1)) {
-              printf("\nMarca inválida, tente novamente.\n");
-              printf("Marca do produto: ");
-              scanf(" %14[^\n]", venda->marca);
-            }
-            */
             printf("Quantidade do produto: ");
             scanf("%3s", venda->qntd);
             getchar();
@@ -1399,8 +1232,8 @@ void editaVenda(void) {
             
             (dataEhora2(venda));
             venda->status = '1';
-            fseek(fp, (-1)*sizeof(Venda), SEEK_CUR);
-            fwrite(venda, sizeof(Venda), 1, fp);
+            fseek(fp, (-1)*sizeof(NoVenda), SEEK_CUR);
+            fwrite(venda, sizeof(NoVenda), 1, fp);
             printf("\nvenda editado com sucesso!!!\n");
         } else {
             printf("\nOk, os dados não foram alterados\n");
@@ -1418,7 +1251,7 @@ void editaVenda(void) {
 
 void excluiVenda(void) {
     FILE* fp;
-    Venda* venda;
+    NoVenda* venda;
     int achou;
     char resp;
     char procurado[15];
@@ -1433,16 +1266,15 @@ void excluiVenda(void) {
     printf("= = Excluir Venda = = \n");
     printf("= = = = = = = = = = = =\n");
   
-    printf("\nCódigo do produto vendido a ser apagado: ");
-    scanf("%5s", venda->cod);
-    while((validacaoCod(venda->cod)!=1)) {
-      printf("\nCódigo inválido, tente novamente.\n");
-      printf("Código do produto: ");
-      scanf("%5s", venda->cod);
+    printf("Nome do produto vendido a ser apagado: ");
+    scanf(" %14[^\n]", procurado);
+    while((validacaoPalavra(procurado)!= 1)) {
+      printf("\nNome inválido, tente novamente.\n");
+      printf("Nome do produto vendido a ser apagado: ");
     }
-    venda = (Venda*) malloc(sizeof(Venda));
+    venda = (NoVenda*) malloc(sizeof(NoVenda));
     achou = 0;
-    while((!achou) && (fread(venda, sizeof(Venda), 1, fp))) {
+    while((!achou) && (fread(venda, sizeof(NoVenda), 1, fp))) {
         if ((strcmp(venda->cod, procurado) == 0) && (venda->status == '1')) {
             achou = 1;
         }
@@ -1454,8 +1286,8 @@ void excluiVenda(void) {
         scanf("%c", &resp);
         if (resp == 's' || resp == 'S') {
             venda->status = '0';
-            fseek(fp, -1*sizeof(Venda), SEEK_CUR);
-            fwrite(venda, sizeof(Venda), 1, fp);
+            fseek(fp, -1*sizeof(NoVenda), SEEK_CUR);
+            fwrite(venda, sizeof(NoVenda), 1, fp);
             printf("\nVenda excluído com sucesso!!!\n");
         } else {
             printf("\nOk, os dados não foram alterados\n");
@@ -1471,7 +1303,7 @@ void excluiVenda(void) {
 }
 
 
-void gravaVenda(Venda* venda) {
+void gravaVenda(NoVenda* venda) {
     FILE* fp;
     fp = fopen("venda.dat", "ab");
     if (fp == NULL) {
@@ -1479,14 +1311,12 @@ void gravaVenda(Venda* venda) {
         printf("Não é possível continuar o programa...\n");
         exit(1);
     }
-    fwrite(venda, sizeof(Venda), 1, fp);
+    fwrite(venda, sizeof(NoVenda), 1, fp);
     fclose(fp);
 }
 
-void exibeVenda(Venda* venda) {
+void exibeVenda(NoVenda* venda) {
     printf("Código do produto: %s\n", venda->cod);
-    //printf("Nome do produto: %s\n", venda->nome);
-    //printf("Marca do produto: %s\n", venda->marca);
     printf("Quantidade: %s\n", venda->qntd);
     printf("Status: %c\n", venda->status);
     (dataEhora2(venda));
@@ -1548,7 +1378,7 @@ int menuRelatorio(void) {
 
 NoCliente* listaOrdenadaCliente(void) {
   FILE* fp;
-  Cliente* cliente;
+  NoCliente* cliente;
   NoCliente* noClt;
   NoCliente* lista;
 
@@ -1560,8 +1390,8 @@ NoCliente* listaOrdenadaCliente(void) {
     exit(1);
   }
 
-  cliente = (Cliente*) malloc(sizeof(Cliente));
-  while(fread(cliente, sizeof(Cliente), 1, fp)) {
+  cliente = (NoCliente*) malloc(sizeof(NoCliente));
+  while(fread(cliente, sizeof(NoCliente), 1, fp)) {
     if (cliente->status == '1') {
       noClt = (NoCliente*) malloc(sizeof(NoCliente));
       strcpy(noClt->nome, cliente->nome);
@@ -1598,7 +1428,7 @@ NoCliente* listaOrdenadaCliente(void) {
 
 NoCliente* listaDiretaCliente(void) {
   FILE* fp;
-  Cliente* cliente;
+  NoCliente* cliente;
   NoCliente* noClt;
   NoCliente* lista;
   NoCliente* ultimo;
@@ -1611,8 +1441,8 @@ NoCliente* listaDiretaCliente(void) {
     exit(1);
   }
 
-  cliente = (Cliente*) malloc(sizeof(Cliente));
-  while(fread(cliente, sizeof(Cliente), 1, fp)) {
+  cliente = (NoCliente*) malloc(sizeof(NoCliente));
+  while(fread(cliente, sizeof(NoCliente), 1, fp)) {
     if (cliente->status == '1') {
       noClt = (NoCliente*) malloc(sizeof(NoCliente));
       strcpy(noClt->nome, cliente->nome);
@@ -1654,9 +1484,22 @@ void exibeListaCliente(NoCliente* lista) {
   }
 }
 
+void limpar(){
+    NoCliente* lista;
+    NoCliente* primeiro;
+    NoCliente *cliente = primeiro, *aux;
+    while (lista != NULL)
+    {
+        aux = lista;
+        lista = lista->prox;
+        free (aux);
+    }
+    primeiro = NULL;
+}
+
 NoProd* listaOrdenadaProduto(void) {
   FILE* fp;
-  Prod* produto;
+  NoProd* produto;
   NoProd* noProdut;
   NoProd* lista1;
 
@@ -1668,13 +1511,14 @@ NoProd* listaOrdenadaProduto(void) {
     exit(1);
   }
 
-  produto = (Prod*) malloc(sizeof(Prod));
-  while(fread(produto, sizeof(Prod), 1, fp)) {
+  produto = (NoProd*) malloc(sizeof(NoProd));
+  while(fread(produto, sizeof(NoProd), 1, fp)) {
     if (produto->status == '1') {
       noProdut = (NoProd*) malloc(sizeof(NoProd));
       strcpy(noProdut->cod, produto->cod);
       strcpy(noProdut->nome, produto->nome);
       strcpy(noProdut->marca, produto->marca);
+      strcpy(noProdut->preco, produto->preco);
       strcpy(noProdut->qntd, produto->qntd);
       noProdut->status = produto->status;
 
@@ -1703,13 +1547,14 @@ NoProd* listaOrdenadaProduto(void) {
 
 void exibeListaProduto(NoProd* lista1) {
   printf("\n\n");
-  printf("= = = = = = = = = = = = = = =\n");
-  printf("= = Listagem de Produtos = = \n");
-  printf("= = = = = = = = = = = = = = =\n");
+  printf("* = = = = = = = = = = = = * \n");
+  printf("=   Listagem de Produtos  = \n");
+  printf("* = = = = = = = = = = = = * \n");
   while (lista1 != NULL) {
-    printf("Código: %s\n", lista1->cod);
+    printf("\nCódigo: %s\n", lista1->cod);
     printf("Nome: %s\n",lista1->nome);
     printf("Marca: %s\n", lista1->marca);
+    printf("Preço: R$%s\n", lista1->preco);
     printf("Quantidade: %s\n", lista1->qntd);
     printf("\n");
     lista1 = lista1->prox;
@@ -1718,7 +1563,7 @@ void exibeListaProduto(NoProd* lista1) {
 
 NoCompra* listaInvertidaCompra(void) {
   FILE* fp;
-  Compra* compra;
+  NoCompra* compra;
   NoCompra* noCompr;
   NoCompra* lista2;
 
@@ -1730,14 +1575,11 @@ NoCompra* listaInvertidaCompra(void) {
     exit(1);
   }
 
-  compra = (Compra*) malloc(sizeof(Compra));
-  while(fread(compra, sizeof(Compra), 1, fp)) {
+  compra = (NoCompra*) malloc(sizeof(NoCompra));
+  while(fread(compra, sizeof(NoCompra), 1, fp)) {
     if (compra->status == '1') {
       noCompr = (NoCompra*) malloc(sizeof(NoCompra));
       strcpy(noCompr->cod, compra->cod);
-      strcpy(noCompr->cod2, compra->cod2);
-      //strcpy(noCompr->nome, compra->nome);
-      //strcpy(noCompr->marca, compra->marca);
       strcpy(noCompr->qntd, compra->qntd);
       noCompr->status = compra->status;
       noCompr->prox = lista2;
@@ -1755,10 +1597,7 @@ void exibeListaCompra(NoCompra* lista2) {
   printf("= = Relatório de Compras = = \n");
   printf("= = = = = = = = = = = = = = =\n");
   while (lista2 != NULL) {
-    printf("Código da Empresa: %s\n", lista2->cod);
-    printf("\nCódigo do Produto: %s\n", lista2->cod2);
-    //printf("Nome: %s\n",lista2->nome);
-    //printf("Marca: %s\n", lista2->marca);
+    printf("\nCódigo do Produto: %s\n", lista2->cod);
     printf("Quantidade: %s\n", lista2->qntd);
     printf("\n");
     lista2 = lista2->prox;
@@ -1767,7 +1606,7 @@ void exibeListaCompra(NoCompra* lista2) {
 
 NoVenda* listaInvertidaVenda(void) {
   FILE* fp;
-  Venda* venda;
+  NoVenda* venda;
   NoVenda* noVend;
   NoVenda* lista3;
 
@@ -1779,13 +1618,11 @@ NoVenda* listaInvertidaVenda(void) {
     exit(1);
   }
 
-  venda = (Venda*) malloc(sizeof(Venda));
-  while(fread(venda, sizeof(Venda), 1, fp)) {
+  venda = (NoVenda*) malloc(sizeof(NoVenda));
+  while(fread(venda, sizeof(NoVenda), 1, fp)) {
     if (venda->status == '1') {
       noVend = (NoVenda*) malloc(sizeof(NoVenda));
       strcpy(noVend->cod, venda->cod);
-      //strcpy(noVend->nome, venda->nome);
-      //strcpy(noVend->marca, venda->marca);
       strcpy(noVend->qntd, venda->qntd);
       noVend->status = venda->status;
       noVend->prox = lista3;
@@ -1804,8 +1641,6 @@ void exibeListaVenda(NoVenda* lista3) {
   printf("= = = = = = = = = = = = = = =\n");
   while (lista3 != NULL) {
     printf("\nCódigo do Produto: %s\n", lista3->cod);
-    //printf("Nome: %s\n",lista3->nome);
-    //printf("Marca: %s\n", lista3->marca);
     printf("Quantidade: %s\n", lista3->qntd);
     printf("\n");
     lista3 = lista3->prox;
@@ -1940,7 +1775,7 @@ int menuSobre(void) {
   int op;
   printf("\n\n");
   printf("= = = = = = = = = = = = = = = = = = = \n");
-  printf("= S O B R E = = = = = = = = \n");
+  printf("= = = = = = = = Sobre = = = = = = = = \n");
   printf("= = = = = = = = = = = = = = = = = = = \n");
   printf("1 - Sobre\n");
   printf("0 - Retornar\n");
@@ -1951,95 +1786,68 @@ int menuSobre(void) {
 }
 
 void sobreOprograma(void){
-    printf("\n\n");
-    printf("    *============================= SOBRE O PROGRAMA ============================*\n");
-    printf("    |                                                                           |\n");
-    printf("    |PROGRAMA DE CONTROLE DE ESTOQUES CRIADO UTILIZANDO ALOCACAO DINAMICA,      |\n");
-    printf("    |STRUCTS E PONTEIROS, COMO FORMA DE AVALIACAO DA DISCIPLINA DE PROGRAMAÇÃO, |\n");
-    printf("    |DO PROFESSOR: FLAVIUS GORGONIO. APRESENTADO EM SALA DE AULA,               |\n");
-    printf("    |COM A FINALIDADE DE OBTER NOTAS DE AVALIAÇÃO DA DISCIPLINA.                |\n");
-    printf("    |                                                                           |\n");
-    printf("    |                                                                           |\n");
-    printf("    |                              IDENTIFICACAO                                |\n");
-    printf("    |                                                                           |\n");
-    printf("    |           ALUNAS DE SISTEMAS DE INFORMAÇÃO - UFRN CERES CAICÓ             |\n");
-    printf("    |                                                                           |\n");
-    printf("    |RENATA ARAÚJO.                             WANESSA SILVA.                  |\n");
-    printf("    |TEL:(84) 9 9912-3995                       TEL:(84) 9 9849-0496            |\n");
-    printf("    |renatakarla02@gmail.com                    wanessaparelhas68@gmail.com     |\n");
-    printf("    |github.com/renatak12                       github.com/wanessabezerra       |\n");
-    printf("    *===========================================================================*\n");
-
+  printf("\n\n");
+  printf("    *============================= SOBRE O PROGRAMA ============================*\n");
+  printf("    |                                                                           |\n");
+  printf("    |PROGRAMA DE CONTROLE DE ESTOQUES CRIADO UTILIZANDO ALOCACAO DINAMICA,      |\n");
+  printf("    |STRUCTS E PONTEIROS, COMO FORMA DE AVALIACAO DA DISCIPLINA DE PROGRAMAÇÃO, |\n");
+  printf("    |DO PROFESSOR: FLAVIUS GORGONIO. APRESENTADO EM SALA DE AULA,               |\n");
+  printf("    |COM A FINALIDADE DE OBTER NOTAS DE AVALIAÇÃO DA DISCIPLINA.                |\n");
+  printf("    |                                                                           |\n");
+  printf("    |                                                                           |\n");
+  printf("    |                              IDENTIFICACAO                                |\n");
+  printf("    |                                                                           |\n");
+  printf("    |           ALUNAS DE SISTEMAS DE INFORMAÇÃO - UFRN CERES CAICÓ             |\n");
+  printf("    |                                                                           |\n");
+  printf("    |RENATA ARAÚJO.                             WANESSA SILVA.                  |\n");
+  printf("    |TEL:(84) 9 9912-3995                       TEL:(84) 9 9849-0496            |\n");
+  printf("    |renatakarla02@gmail.com                    wanessaparelhas68@gmail.com     |\n");
+  printf("    |github.com/renatak12                       github.com/wanessabezerra       |\n");
+  printf("    *===========================================================================*\n");
 }
 
 /////////////// validaçoes ////////////////
 
-void dataEhora1(Compra* compra) {
-  FILE* fp;
-  fp = fopen("venda.dat", "ab");
-  if (fp == NULL) {
-    printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
-    printf("Não é possível continuar o programa...\n");
-    exit(1);
-  }
-  struct tm *data_hora_atual;     
-  
-  time_t segundos;  
-  time(&segundos);     
-  data_hora_atual = localtime(&segundos);
-  
-  printf("Hora de saída: %d:",data_hora_atual->tm_hour-3);printf("%d:",data_hora_atual->tm_min);
-  printf("%d\n",data_hora_atual->tm_sec);
-  printf("Data de saída: %d/", data_hora_atual->tm_mday);
-  printf("%d/",data_hora_atual->tm_mon+1);
-  printf("%d\n\n",data_hora_atual->tm_year+1900);
-  fclose(fp);
-}
 
-int validacaoEhNumero(char c){
-  if (c>='A' && c<='Z') {
-      return 0;
-    }
-  else if (c>='a' && c<='z') {
-      return 0;
-    }
+int validacaoEhNumero(char c) {
+  if (c>='0'&& c<='9') {
+    return 1;
+  }
   else {
-      return 1;
-    }
-
-}
-
-int validacaoEhNumero1(char *preco) {
-  if (strlen(preco) == 4){
-    int tam = strlen(preco);
-    for(int i = 0; i < tam; i++){
-      char c = preco[i];
-      if (c>='A' && c<='Z') {
-        return 0;
-      }
-      else if (c>='a' && c<='z') {
-        return 0;
-      }
-    }
+    return 0;
   }
-  return 1;
 }
 
 
-int validacaoEhNumero2(char *qntd) {
-  if (strlen(qntd) == 4){
-    int tam = strlen(qntd);
-    for(int i = 0; i < tam; i++){
-      char c = qntd[i];
-      if (c>='A' && c<='Z') {
-        return 0;
-      }
-      else if (c>='a' && c<='z') {
-        return 0;
-      }
+int verificacaoNome(char procurado[11]) {
+    FILE* fp;
+    NoCliente* cliente;
+    int achou;
+    fp = fopen("cliente.dat", "rb");
+
+   if (fp == NULL) {
+        printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+        printf("Não é possível continuar o programa...\n");
+        exit(1);
     }
-  }
-  return 1;
+
+    cliente = (NoCliente*) malloc(sizeof(NoCliente));
+
+    achou = 0;
+    while((!achou) && (fread(cliente, sizeof(NoCliente), 1, fp))) {
+
+        if ((strcmp(cliente->nome, procurado) == 0) && (cliente->status == '1')) {
+            achou = 1;
+        }
+    }
+    if (achou) {
+        return 0;
+    } else {
+        return 1;
+    }
+
+    fclose(fp);
+    free(cliente);
 }
 
 int validacaoPalavra(char s[]) {
@@ -2047,24 +1855,60 @@ int validacaoPalavra(char s[]) {
   for(int i = 0; i < tam; i++){
     char c = s[i];
     if (c>='0'&& c<='9') {
-    return 0;
+      return 0;
+    }else if(verificacaoNome(s) == 0){
+      return 0;
     }
   }
   return 1;
+}
+
+int verificacaoCPF(char procurado[11]) {
+    FILE* fp;
+    NoCliente* cliente;
+    int achou;
+    fp = fopen("cliente.dat", "rb");
+
+   if (fp == NULL) {
+        printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+        printf("Não é possível continuar o programa...\n");
+        exit(1);
+    }
+
+    cliente = (NoCliente*) malloc(sizeof(NoCliente));
+
+    achou = 0;
+    while((!achou) && (fread(cliente, sizeof(NoCliente), 1, fp))) {
+
+        if ((strcmp(cliente->cpf, procurado) == 0) && (cliente->status == '1')) {
+            achou = 1;
+        }
+    }
+    if (achou) {
+        return 0;
+    } else {
+        return 1;
+    }
+
+    fclose(fp);
+    free(cliente);
 }
 
 int validacaoCpf(char *cpf){
     int i, j, digito1 = 0, digito2 = 0;
     if(strlen(cpf) != 11)
         return 0;
+    
     else if((strcmp(cpf,"00000000000") == 0) || (strcmp(cpf,"11111111111") == 0) || (strcmp(cpf,"22222222222") == 0) ||
             (strcmp(cpf,"33333333333") == 0) || (strcmp(cpf,"44444444444") == 0) || (strcmp(cpf,"55555555555") == 0) ||
             (strcmp(cpf,"66666666666") == 0) || (strcmp(cpf,"77777777777") == 0) || (strcmp(cpf,"88888888888") == 0) ||
-            (strcmp(cpf,"99999999999") == 0))
+            (strcmp(cpf,"99999999999") == 0)){
         return 0;
-    else
-    {
-        
+
+    }else if(verificacaoCPF(cpf) == 0){
+        return 0;
+
+    }else {
         for(i = 0, j = 10; i < strlen(cpf)-2; i++, j--)
             digito1 += (cpf[i]-48) * j;
         digito1 %= 11;
@@ -2110,7 +1954,7 @@ int validacaoTelefone(char *telefone){
           (strcmp(telefone,"999999999") == 0)){
       return 0;}
 
-  else if(strlen(telefone) == 9){
+  else if(strlen(telefone) == 6){
     int tam = strlen(telefone);
     for(int i = 0; i < tam; i++){
       char c = telefone[i];
@@ -2152,6 +1996,37 @@ int dataValida(int dd, int mm, int aa) {
     return 1;
 }
 
+int verificacaoCod(char procurado[11]) {
+    FILE* fp;
+    NoProd* produto;
+    int achou;
+    fp = fopen("produto.dat", "rb");
+
+   if (fp == NULL) {
+        printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+        printf("Não é possível continuar o programa...\n");
+        exit(1);
+    }
+
+    produto = (NoProd*) malloc(sizeof(NoProd));
+
+    achou = 0;
+    while((!achou) && (fread(produto, sizeof(NoProd), 1, fp))) {
+
+        if ((strcmp(produto->cod, procurado) == 0) && (produto->status == '1')) {
+            achou = 1;
+        }
+    }
+    if (achou) {
+        return 0;
+    } else {
+        return 1;
+    }
+
+    fclose(fp);
+    free(produto);
+}
+
 int validacaoCod(char *codi){
   if(strlen(codi) != 5){
       return 0;
@@ -2164,32 +2039,6 @@ int validacaoCod(char *codi){
       return 0;}
 
   else if(strlen(codi) == 5){
-    int tam = strlen(codi);
-    for(int i = 0; i < tam; i++){
-      char c = codi[i];
-      if (c>='A' && c<='Z') {
-        return 0;
-      }
-      else if (c>='a' && c<='z') {
-        return 0;
-      }
-    }
-  }
-  return 1;
-}
-
-int validacaoCod2(char *codi){
-  if(strlen(codi) != 4){
-      return 0;
-      }
-
-  else if((strcmp(codi,"0000") == 0) || (strcmp(codi,"1111") == 0) || (strcmp(codi,"2222") == 0) ||
-          (strcmp(codi,"3333") == 0) || (strcmp(codi,"4444") == 0) || (strcmp(codi,"5555") == 0) ||
-          (strcmp(codi,"6666") == 0) || (strcmp(codi,"7777") == 0) || (strcmp(codi,"8888") == 0) ||
-          (strcmp(codi,"9999") == 0)){
-      return 0;}
-
-  else if(strlen(codi) == 4){
     int tam = strlen(codi);
     for(int i = 0; i < tam; i++){
       char c = codi[i];
@@ -2226,9 +2075,29 @@ int validacaoEhLetra(char c) {
     return 0;
   }
 }
+void dataEhora1(NoCompra* compra) {
+  FILE* fp;
+  fp = fopen("venda.dat", "ab");
+  if (fp == NULL) {
+    printf("Ops! Ocorreu um erro na abertura do arquivo!\n");
+    printf("Não é possível continuar o programa...\n");
+    exit(1);
+  }
+  struct tm *data_hora_atual;     
+  
+  time_t segundos;  
+  time(&segundos);     
+  data_hora_atual = localtime(&segundos);
+  
+  printf("Hora de saída: %d:",data_hora_atual->tm_hour-3);printf("%d:",data_hora_atual->tm_min);
+  printf("%d\n",data_hora_atual->tm_sec);
+  printf("Data de saída: %d/", data_hora_atual->tm_mday);
+  printf("%d/",data_hora_atual->tm_mon+1);
+  printf("%d\n\n",data_hora_atual->tm_year+1900);
+  fclose(fp);
+}
 
-
-void dataEhora2(Venda* venda) {
+void dataEhora2(NoVenda* venda) {
   FILE* fp;
   fp = fopen("venda.dat", "ab");
   if (fp == NULL) {
